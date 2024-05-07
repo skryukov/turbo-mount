@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "target": "es2017",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "rootDir": "src",
+    "strict": true,
+    "removeComments": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "noEmit": false,
+    "declaration": false
+  },
+  "exclude": [
+    "dist"
+  ],
+  "include": [
+    "src/**/*"
+  ]
+}

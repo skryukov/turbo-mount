@@ -1,0 +1,66 @@
+{
+  "name": "turbo-mount",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Use React, Vue, and other components with Hotwire",
+  "author": "Svyatoslav Kryukov <me@skryukov.dev>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skryukov/turbo-mount.git",
+    "directory": "packages/turbo-mount"
+  },
+  "bugs": {
+    "url": "https://github.com/skryukov/turbo-mount/issues"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "types": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types",
+    "build": "npm run types && rollup -c",
+    "prerelease": "npm run clean && npm run build && git --no-pager diff && echo && npm pack --dry-run"
+  },
+  "module": "dist/turbo-mount.js",
+  "main": "dist/turbo-mount.umd.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist/turbo-mount.js",
+    "dist/turbo-mount.umd.js",
+    "dist/types/**/*"
+  ],
+  "devDependencies": {
+    "@babel/types": "^7.24.5",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "react": ">= 17.0",
+    "react-dom": ">= 17.0",
+    "rollup": "^2.79.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "svelte": ">= 3.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5",
+    "vue": ">= 3.0"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": ">= 3.0"
+  },
+  "peerDependencies": {
+    "react": ">= 17.0",
+    "react-dom": ">= 17.0",
+    "svelte": ">= 3.0",
+    "vue": ">= 3.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  }
+}
