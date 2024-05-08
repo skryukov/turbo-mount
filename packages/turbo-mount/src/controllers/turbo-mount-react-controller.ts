@@ -6,10 +6,12 @@ export class TurboMountReactController extends TurboMountController<ComponentTyp
     framework = "react"
 
     async mountComponent(el: Element, Component: ComponentType, props: object) {
-        const {createRoot} = await import("react-dom/client");
-        const root = createRoot(el);
-        const {createElement} = await import("react");
-        root.render(createElement(Component, props))
+        const [reactDom, react] = await Promise.all([
+            import("react-dom/client"),
+            import("react")
+        ]);
+        const root = reactDom.createRoot(el);
+        root.render(react.createElement(Component, props))
 
         return root.unmount
     }
