@@ -4,8 +4,8 @@
       "es2015",
       "dom"
     ],
-    "target": "es2017",
-    "module": "es2015",
+    "target": "es2020",
+    "module": "es2020",
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "rootDir": "src",

@@ -6,7 +6,7 @@
   "author": "Svyatoslav Kryukov <me@skryukov.dev>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skryukov/turbo-mount.git",
+    "url": "git+https://github.com/skryukov/turbo-mount.git",
     "directory": "packages/turbo-mount"
   },
   "bugs": {

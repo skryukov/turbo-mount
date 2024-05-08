@@ -5,7 +5,7 @@ import {ComponentType} from "svelte";
 export class TurboMountSvelteController extends TurboMountController<ComponentType> {
     framework = "svelte"
 
-    mountComponent(el: Element, Component: ComponentType, props: object) {
+    async mountComponent(el: Element, Component: ComponentType, props: object) {
         const component = new Component({ target: el, props })
 
         return component.$destroy
