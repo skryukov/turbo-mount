@@ -2,18 +2,14 @@ import { Controller } from '@hotwired/stimulus';
 
 class TurboMountController extends Controller {
     connect() {
-        this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps).then((umount) => {
-            this._umountComponentCallback = umount;
-        });
+        this._umountComponentPromise = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
     }
     disconnect() {
         this.umountComponent();
     }
     propsValueChanged() {
         this.umountComponent();
-        this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps).then((umount) => {
-            this._umountComponentCallback = umount;
-        });
+        this._umountComponentPromise = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
     }
     get componentProps() {
         return this.propsValue;
@@ -25,8 +21,8 @@ class TurboMountController extends Controller {
         return this.resolveComponent(this.componentValue);
     }
     umountComponent() {
-        this._umountComponentCallback && this._umountComponentCallback();
-        this._umountComponentCallback = undefined;
+        this._umountComponentPromise?.then(umount => umount());
+        this._umountComponentPromise = undefined;
     }
     resolveComponent(component) {
         const app = this.application;
