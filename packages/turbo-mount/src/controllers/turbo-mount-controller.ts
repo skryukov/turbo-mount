@@ -11,12 +11,12 @@ export abstract class TurboMountController<T> extends Controller {
 
     abstract framework: string;
 
-    abstract mountComponent(el: Element, Component: T, props: object): () => void;
+    abstract mountComponent(el: Element, Component: T, props: object): Promise<() => void>;
 
-    _umountComponentCallback?: () => void;
+    _umountComponentPromise?: Promise<() => void>;
 
     connect() {
-        this._umountComponentCallback ||= this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
+        this._umountComponentPromise = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
     }
 
     disconnect() {
@@ -25,7 +25,7 @@ export abstract class TurboMountController<T> extends Controller {
 
     propsValueChanged() {
         this.umountComponent();
-        this._umountComponentCallback = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
+        this._umountComponentPromise = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
     }
 
     get componentProps() {
@@ -41,8 +41,8 @@ export abstract class TurboMountController<T> extends Controller {
     }
 
     umountComponent() {
-        this._umountComponentCallback && this._umountComponentCallback();
-        this._umountComponentCallback = undefined;
+        this._umountComponentPromise?.then(umount => umount());
+        this._umountComponentPromise = undefined;
     }
 
     resolveComponent(component: string): T {

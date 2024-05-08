@@ -1,18 +1,15 @@
 import { Controller } from '@hotwired/stimulus';
-import { createElement } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createApp } from 'vue';
 
 class TurboMountController extends Controller {
     connect() {
-        this._umountComponentCallback || (this._umountComponentCallback = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps));
+        this._umountComponentPromise = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
     }
     disconnect() {
         this.umountComponent();
     }
     propsValueChanged() {
         this.umountComponent();
-        this._umountComponentCallback = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
+        this._umountComponentPromise = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps);
     }
     get componentProps() {
         return this.propsValue;
@@ -24,8 +21,8 @@ class TurboMountController extends Controller {
         return this.resolveComponent(this.componentValue);
     }
     umountComponent() {
-        this._umountComponentCallback && this._umountComponentCallback();
-        this._umountComponentCallback = undefined;
+        this._umountComponentPromise?.then(umount => umount());
+        this._umountComponentPromise = undefined;
     }
     resolveComponent(component) {
         const app = this.application;
@@ -42,8 +39,10 @@ class TurboMountReactController extends TurboMountController {
         super(...arguments);
         this.framework = "react";
     }
-    mountComponent(el, Component, props) {
+    async mountComponent(el, Component, props) {
+        const { createRoot } = await import('react-dom/client');
         const root = createRoot(el);
+        const { createElement } = await import('react');
         root.render(createElement(Component, props));
         return root.unmount;
     }
@@ -54,7 +53,7 @@ class TurboMountSvelteController extends TurboMountController {
         super(...arguments);
         this.framework = "svelte";
     }
-    mountComponent(el, Component, props) {
+    async mountComponent(el, Component, props) {
         const component = new Component({ target: el, props });
         return component.$destroy;
     }
@@ -65,7 +64,8 @@ class TurboMountVueController extends TurboMountController {
         super(...arguments);
         this.framework = "vue";
     }
-    mountComponent(el, Component, props) {
+    async mountComponent(el, Component, props) {
+        const { createApp } = await import('vue');
         const app = createApp(Component, props);
         app.mount(el);
         return app.unmount;
