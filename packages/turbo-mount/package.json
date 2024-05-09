@@ -22,9 +22,9 @@
   "module": "dist/turbo-mount.js",
   "types": "dist/types/index.d.ts",
   "exports": {
-    "./react": "./dist/turbo-mount/react.js",
-    "./svelte": "./dist/turbo-mount/svelte.js",
-    "./vue": "./dist/turbo-mount/vue.js",
+    "./react": "./dist/plugins/react.js",
+    "./svelte": "./dist/plugins/svelte.js",
+    "./vue": "./dist/plugins/vue.js",
     ".": "./dist/turbo-mount.js"
   },
   "files": [
