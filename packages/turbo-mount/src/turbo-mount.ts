@@ -1,36 +1,28 @@
 import {Application, ControllerConstructor} from '@hotwired/stimulus';
-import {
-    TurboMountReactController,
-    TurboMountSvelteController,
-    TurboMountVueController
-} from "./controllers";
 
 export interface ApplicationWithTurboMount<T> extends Application {
     turboMount: { [framework: string]: TurboMount<T> };
 }
 
-export class TurboMount<T> {
-    static frameworkControllers: Map<string, ControllerConstructor> = new Map();
+export type Plugin = {
+    framework: string;
+    controller: ControllerConstructor;
+}
 
+export class TurboMount<T> {
     components: Map<string, T>;
     application: ApplicationWithTurboMount<T>;
     framework: string;
     baseController?: ControllerConstructor;
 
-    constructor(props: { application: Application, framework: string }) {
+    constructor(props: { application: Application, plugin: Plugin }) {
         this.components = new Map();
         this.application = props.application as ApplicationWithTurboMount<T>;
-        this.framework = props.framework;
-        this.baseController = undefined;
-
-        if (!this.framework) {
-            throw new Error('framework is required');
-        }
+        this.framework = props.plugin.framework;
+        this.baseController = props.plugin.controller;
 
         this.application.turboMount ||= {};
         this.application.turboMount[this.framework] = this;
-
-        this.baseController = TurboMount.frameworkControllers.get(this.framework);
 
         if (this.baseController) {
             this.application.register(`turbo-mount-${this.framework}`, this.baseController);
@@ -62,7 +54,3 @@ export class TurboMount<T> {
         return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     }
 }
-
-TurboMount.frameworkControllers.set("react", TurboMountReactController)
-TurboMount.frameworkControllers.set("svelte", TurboMountSvelteController)
-TurboMount.frameworkControllers.set("vue", TurboMountVueController)

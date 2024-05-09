@@ -12,7 +12,10 @@ module Turbo
       # config.after_initialize do
       #   config.assets.precompile -= Turbo::Mount::Engine::PRECOMPILE_ASSETS
       # end
-      PRECOMPILE_ASSETS = %w[turbo-mount.js turbo-mount.min.js turbo-mount.min.js.map].freeze
+      FILES = %w[turbo-mount turbo-mount/react turbo-mount/vue turbo-mount/svelte].freeze
+      PRECOMPILE_ASSETS = FILES.flat_map do |framework|
+        %w[js min.js min.js.map].map { |type| "#{framework}.#{type}" }
+      end.freeze
 
       initializer "turbo-mount.assets" do
         if Rails.application.config.respond_to?(:assets)
