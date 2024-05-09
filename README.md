@@ -20,12 +20,14 @@ First, you need to initialize `TurboMount` and register the components you want 
 
 ```js
 import { Application } from "@hotwired/stimulus"
-import { TurboMount } from "turbo-mount"
 
 const application = Application.start()
 
+import { TurboMount } from "turbo-mount"
+import plugin from "turbo-mount/react"
+
 // Initialize TurboMount and register the react stimulus controller
-const turboMount = new TurboMount({application, framework: "react"});
+const turboMount = new TurboMount({application, plugin});
 
 // Register the components you want to use
 import { SketchPicker } from 'react-color'
@@ -61,6 +63,12 @@ export default class extends TurboMountReactController {
     this.propsValue = { ...this.propsValue, color: color.hex };
   };
 }
+```
+
+Then pass this controller the register method:
+
+```js
+turboMount.register('SketchPicker', SketchPicker, TurboMountReactController);
 ```
 
 ## Development

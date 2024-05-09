@@ -16,18 +16,23 @@
     "clean": "rm -rf dist",
     "types": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types",
     "build": "npm run types && rollup -c",
-    "prerelease": "npm run clean && npm run build && git --no-pager diff && echo && npm pack --dry-run"
+    "prerelease": "npm run clean && npm run build && git --no-pager diff && echo && npm pack --dry-run",
+    "copy": "cp dist/{*.js,*.map} ../../app/assets/javascripts/ && mkdir -p ../../app/assets/javascripts/turbo-mount && cp dist/plugins/* ../../app/assets/javascripts/turbo-mount/"
   },
   "module": "dist/turbo-mount.js",
-  "main": "dist/turbo-mount.umd.js",
   "types": "dist/types/index.d.ts",
+  "exports": {
+    "./react": "./dist/turbo-mount/react.js",
+    "./svelte": "./dist/turbo-mount/svelte.js",
+    "./vue": "./dist/turbo-mount/vue.js",
+    ".": "./dist/turbo-mount.js"
+  },
   "files": [
-    "dist/turbo-mount.js",
-    "dist/turbo-mount.umd.js",
-    "dist/types/**/*"
+    "dist/**/*"
   ],
   "devDependencies": {
     "@babel/types": "^7.24.5",
+    "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
