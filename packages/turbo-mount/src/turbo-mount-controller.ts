@@ -6,8 +6,12 @@ export abstract class TurboMountController<T> extends Controller {
         props: Object,
         component: String
     }
+    static targets = [ "mount" ]
+
     declare readonly propsValue: object;
     declare readonly componentValue: string;
+    declare readonly hasMountTarget: boolean;
+    declare readonly mountTarget: Element;
 
     abstract framework: string;
 
@@ -33,7 +37,7 @@ export abstract class TurboMountController<T> extends Controller {
     }
 
     get mountElement() {
-        return this.element;
+        return this.hasMountTarget ? this.mountTarget : this.element;
     }
 
     get resolvedComponent() {
