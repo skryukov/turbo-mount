@@ -15,7 +15,7 @@ class TurboMountController extends Controller {
         return this.propsValue;
     }
     get mountElement() {
-        return this.element;
+        return this.hasMountTarget ? this.mountTarget : this.element;
     }
     get resolvedComponent() {
         return this.resolveComponent(this.componentValue);
@@ -33,6 +33,7 @@ TurboMountController.values = {
     props: Object,
     component: String
 };
+TurboMountController.targets = ["mount"];
 
 class TurboMount {
     constructor(props) {

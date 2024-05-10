@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Add a mount target to the base controller. ([@skryukov])
+
 ## [0.2.2] - 2024-05-09
 
 ### Fixed

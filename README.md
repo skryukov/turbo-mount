@@ -71,6 +71,17 @@ Then pass this controller the register method:
 turboMount.register('SketchPicker', SketchPicker, TurboMountReactController);
 ```
 
+### Mount target
+
+You can add a mount target, which will be used to mount the component:
+
+```erb
+<%= turbo_mount_react_component("SketchPicker", props: {color: "#430"}) do |controller_name| %>
+  <h3>Color picker</h3>
+  <div data-<%= controller_name %>-target="mount"></div>
+<% end %>
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
