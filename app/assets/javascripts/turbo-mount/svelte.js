@@ -1,4 +1,4 @@
-import { TurboMountController } from 'turbo-mount';
+import { TurboMountController, TurboMount } from 'turbo-mount';
 
 class TurboMountSvelteController extends TurboMountController {
     constructor() {
@@ -17,5 +17,10 @@ const plugin = {
     framework: "svelte",
     controller: TurboMountSvelteController,
 };
+class TurboMountSvelte extends TurboMount {
+    constructor(props) {
+        super(Object.assign(Object.assign({}, props), { plugin }));
+    }
+}
 
-export { plugin as default };
+export { TurboMountSvelte as TurboMount, TurboMountSvelte, plugin as default };

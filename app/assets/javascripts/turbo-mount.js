@@ -1,4 +1,4 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller, Application } from '@hotwired/stimulus';
 
 class TurboMountController extends Controller {
     connect() {
@@ -40,17 +40,25 @@ const camelToKebabCase = (str) => {
 };
 
 class TurboMount {
-    constructor(props) {
+    constructor({ application, plugin }) {
         var _a;
         this.components = new Map();
-        this.application = props.application;
-        this.framework = props.plugin.framework;
-        this.baseController = props.plugin.controller;
+        this.application = this.findOrStartApplication(application);
+        this.framework = plugin.framework;
+        this.baseController = plugin.controller;
         (_a = this.application).turboMount || (_a.turboMount = {});
         this.application.turboMount[this.framework] = this;
         if (this.baseController) {
             this.application.register(`turbo-mount-${this.framework}`, this.baseController);
         }
+    }
+    findOrStartApplication(hydratedApp) {
+        let application = hydratedApp || window.Stimulus;
+        if (!application) {
+            application = Application.start();
+            window.Stimulus = application;
+        }
+        return application;
     }
     register(name, component, controller) {
         controller || (controller = this.baseController);

@@ -24,16 +24,47 @@ yarn add turbo-mount
 
 ### Initialization
 
-First, initialize `TurboMount` and register the components you wish to use:
+To begin using `TurboMount`, start by initializing the library and registering the components you intend to use. Below are the steps to set up `TurboMount` with different configurations.
+
+#### Standard Initialization
+
+Import the necessary modules and initialize ```TurboMount``` with your application and the desired plugin. Here's how to set it up with a React plugin:
 
 ```js
-import { Application } from "@hotwired/stimulus"
-import { TurboMount } from "turbo-mount"
-import plugin from "turbo-mount/react"
-import { SketchPicker } from 'react-color'
+import { Application } from "@hotwired/stimulus";
+import { TurboMount } from "turbo-mount";
+import plugin from "turbo-mount/react";
+import { SketchPicker } from 'react-color';
 
 const application = Application.start();
-const turboMount = new TurboMount({application, plugin});
+const turboMount = new TurboMount({ application, plugin });
+
+turboMount.register('SketchPicker', SketchPicker);
+```
+
+#### Simplified Initialization
+
+If you prefer not to specify the `application` explicitly, `TurboMount` can automatically detect or initialize it. This approach uses the `window.Stimulus` if available; otherwise, it initializes a new Stimulus application:
+
+```js
+import { TurboMount } from "turbo-mount";
+import plugin from "turbo-mount/react";
+import { SketchPicker } from 'react-color';
+
+const turboMount = new TurboMount({ plugin });
+
+turboMount.register('SketchPicker', SketchPicker);
+```
+
+#### Plugin-Specific Initialization
+
+For a more streamlined setup, you can directly import a specialized version of `TurboMount`:
+
+```js
+import { TurboMountReact } from "turbo-mount/react";
+import { SketchPicker } from 'react-color';
+
+const turboMount = new TurboMountReact();
 
 turboMount.register('SketchPicker', SketchPicker);
 ```
@@ -91,22 +122,17 @@ turboMount.register('SketchPicker', SketchPicker, SketchController);
 
 ### Vite Integration
 
-`TurboMount` includes a `registerComponents` function that automates the loading of components. It also accepts an optional `controllers` property to autoload customized controllers:
+`TurboMount` includes a `registerComponents` function that automates the loading of components (requires `stimulus-vite-helpers` package). It also accepts an optional `controllers` property to autoload customized controllers:
 
 ```js
-import { application } from "./application"
-import { registerControllers } from "stimulus-vite-helpers";
-import { TurboMount } from "turbo-mount";
+import { TurboMount } from "turbo-mount/react";
 import { registerComponents } from "turbo-mount/vite";
-import plugin from "turbo-mount/react";
 
 const controllers = import.meta.glob("./**/*_controller.js", { eager: true });
-const components = import.meta.glob(`/components/**/*.jsx`, {eager: true});
+const components = import.meta.glob(`/components/**/*.jsx`, { eager: true });
 
-registerControllers(application, controllers);
-
-const turboMount = new TurboMount({application, plugin});
-registerComponents({turboMount, components, controllers});
+const turboMount = new TurboMount();
+registerComponents({ turboMount, components, controllers });
 ```
 
 The `registerComponents` helper searches for controllers in the following paths:
