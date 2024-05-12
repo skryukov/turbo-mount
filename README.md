@@ -6,13 +6,19 @@
 
 ## Installation
 
-Install the gem and add to the application's Gemfile by executing:
+Add the following line to your Gemfile:
 
-    $ bundle add turbo-mount
+```ruby
+gem "turbo-mount"
+```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+For projects utilizing build tools such as [Vite](http://vite-ruby.netlify.app), also install `turbo-mount` package:
 
-    $ gem install turbo-mount
+```bash
+npm install turbo-mount
+# or with yarn
+yarn add turbo-mount
+```
 
 ## Usage
 
