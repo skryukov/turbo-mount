@@ -9,13 +9,15 @@ class TurboMountVueController extends TurboMountController {
     mountComponent(el, Component, props) {
         const app = createApp(Component, props);
         app.mount(el);
-        return () => { app.unmount(); };
+        return () => {
+            app.unmount();
+        };
     }
 }
 
 const plugin = {
     framework: "vue",
-    controller: TurboMountVueController
+    controller: TurboMountVueController,
 };
 
 export { plugin as default };

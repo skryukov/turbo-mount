@@ -10,13 +10,15 @@ class TurboMountReactController extends TurboMountController {
     mountComponent(el, Component, props) {
         const root = createRoot(el);
         root.render(createElement(Component, props));
-        return () => { root.unmount(); };
+        return () => {
+            root.unmount();
+        };
     }
 }
 
 const plugin = {
     framework: "react",
-    controller: TurboMountReactController
+    controller: TurboMountReactController,
 };
 
 export { plugin as default };
