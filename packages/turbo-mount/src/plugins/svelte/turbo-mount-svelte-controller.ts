@@ -1,12 +1,14 @@
-import {ComponentType} from "svelte";
-import {TurboMountController} from "turbo-mount";
+import { ComponentType } from "svelte";
+import { TurboMountController } from "turbo-mount";
 
 export class TurboMountSvelteController extends TurboMountController<ComponentType> {
-    framework = "svelte"
+  framework = "svelte";
 
-    mountComponent(el: Element, Component: ComponentType, props: object) {
-        const component = new Component({ target: el, props })
+  mountComponent(el: Element, Component: ComponentType, props: object) {
+    const component = new Component({ target: el, props });
 
-        return () => { component.$destroy() }
-    }
+    return () => {
+      component.$destroy();
+    };
+  }
 }

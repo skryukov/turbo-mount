@@ -1,2 +1,2 @@
-export {TurboMountController} from "./turbo-mount-controller"
-export * from "./turbo-mount"
+export { TurboMountController } from "./turbo-mount-controller";
+export * from "./turbo-mount";
