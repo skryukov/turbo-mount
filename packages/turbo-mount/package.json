@@ -13,11 +13,14 @@
     "url": "https://github.com/skryukov/turbo-mount/issues"
   },
   "scripts": {
+    "lint": "eslint 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts'",
     "clean": "rm -rf dist",
     "types": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types",
     "build": "npm run types && rollup -c",
     "prerelease": "npm run clean && npm run build && git --no-pager diff && echo && npm pack --dry-run",
-    "copy": "cp dist/{*.js,*.map} ../../app/assets/javascripts/ && mkdir -p ../../app/assets/javascripts/turbo-mount && cp dist/plugins/* ../../app/assets/javascripts/turbo-mount/"
+    "copy": "cp dist/{*.js,*.map} ../../app/assets/javascripts/ && mkdir -p ../../app/assets/javascripts/turbo-mount && cp dist/plugins/* ../../app/assets/javascripts/turbo-mount/",
+    "ci": "npm run lint && npm run build"
   },
   "module": "dist/turbo-mount.js",
   "types": "dist/types/index.d.ts",
@@ -37,6 +40,12 @@
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.8.0",
+    "@typescript-eslint/parser": "^7.8.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5",
     "react": ">= 17.0",
     "react-dom": ">= 17.0",
     "rollup": "^2.79.1",

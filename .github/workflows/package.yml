@@ -1,0 +1,25 @@
+name: Package
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+jobs:
+  lint:
+    defaults:
+      run:
+        working-directory: "packages/turbo-mount"
+
+    runs-on: ubuntu-latest
+    name: Run CI Lint
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install --ignore-scripts
+      - run: npm run ci
