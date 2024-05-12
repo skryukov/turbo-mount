@@ -16,25 +16,25 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ## Usage
 
-First, you need to initialize `TurboMount` and register the components you want to use:
+### Initialization
+
+First, initialize `TurboMount` and register the components you wish to use:
 
 ```js
 import { Application } from "@hotwired/stimulus"
-
-const application = Application.start()
-
 import { TurboMount } from "turbo-mount"
 import plugin from "turbo-mount/react"
+import { SketchPicker } from 'react-color'
 
-// Initialize TurboMount and register the react stimulus controller
+const application = Application.start();
 const turboMount = new TurboMount({application, plugin});
 
-// Register the components you want to use
-import { SketchPicker } from 'react-color'
 turboMount.register('SketchPicker', SketchPicker);
 ```
 
-Now you can use view helpers to mount the components:
+### View Helpers
+
+Use the following helpers to mount components in your views:
 
 ```erb
 <%= turbo_mount_component("SketchPicker", framework: "react", props: {color: "#034"}) %>
@@ -44,11 +44,21 @@ Now you can use view helpers to mount the components:
 <%= turbo_mount_react_component("SketchPicker", props: {color: "#430"}) %>
 ```
 
-In case you need to customize the component's behavior, or pass functions as props, you can create a custom controller:
+### Supported Frameworks
+
+`TurboMount` supports the following frameworks:
+
+- React `"turbo-mount/react"`
+- Vue `"turbo-mount/vue"`
+- Svelte `"turbo-mount/svelte"`
+
+It's possible to add support for other frameworks by creating custom controller class extending `TurboMountController` and providing a plugin. See included plugins for examples.
+
+### Custom Controllers
+
+To customize component behavior or pass functions as props, create a custom controller:
 
 ```js
-// javascript/controllers/turbo_mount_react_sketch_picker_controller.js
-
 import { TurboMountReactController } from "turbo-mount"
 
 export default class extends TurboMountReactController {
@@ -68,12 +78,41 @@ export default class extends TurboMountReactController {
 Then pass this controller the register method:
 
 ```js
-turboMount.register('SketchPicker', SketchPicker, TurboMountReactController);
+import SketchController from "controllers/turbo_mount/sketch_picker_controller"
+
+turboMount.register('SketchPicker', SketchPicker, SketchController);
 ```
+
+### Vite Integration
+
+`TurboMount` includes a `registerComponents` function that automates the loading of components. It also accepts an optional `controllers` property to autoload customized controllers:
+
+```js
+import { application } from "./application"
+import { registerControllers } from "stimulus-vite-helpers";
+import { TurboMount } from "turbo-mount";
+import { registerComponents } from "turbo-mount/vite";
+import plugin from "turbo-mount/react";
+
+const controllers = import.meta.glob("./**/*_controller.js", { eager: true });
+const components = import.meta.glob(`/components/**/*.jsx`, {eager: true});
+
+registerControllers(application, controllers);
+
+const turboMount = new TurboMount({application, plugin});
+registerComponents({turboMount, components, controllers});
+```
+
+The `registerComponents` helper searches for controllers in the following paths:
+- `controllers/turbo-mount/${framework}/${controllerName}`
+- `controllers/turbo-mount/${framework}-${controllerName}`
+- `controllers/turbo-mount-${framework}-${controllerName}`
+- `controllers/turbo-mount/${controllerName}`
+- `controllers/turbo-mount-${controllerName}`
 
 ### Mount target
 
-You can add a mount target, which will be used to mount the component:
+To specify a non-root mount target, use the `data-<%= controller_name %>-target="mount"` attribute:
 
 ```erb
 <%= turbo_mount_react_component("SketchPicker", props: {color: "#430"}) do |controller_name| %>

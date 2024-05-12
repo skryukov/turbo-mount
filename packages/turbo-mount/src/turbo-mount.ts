@@ -1,5 +1,7 @@
 import {Application, ControllerConstructor} from '@hotwired/stimulus';
 
+import {camelToKebabCase} from "./helpers";
+
 export interface ApplicationWithTurboMount<T> extends Application {
     turboMount: { [framework: string]: TurboMount<T> };
 }
@@ -37,7 +39,7 @@ export class TurboMount<T> {
         this.components.set(name, component);
 
         if (controller) {
-            const controllerName = `turbo-mount-${this.framework}-${this.camelToKebabCase(name)}`;
+            const controllerName = `turbo-mount-${this.framework}-${camelToKebabCase(name)}`;
             this.application.register(controllerName, controller);
         }
     }
@@ -48,9 +50,5 @@ export class TurboMount<T> {
             throw new Error(`Unknown component: ${name}`);
         }
         return component;
-    }
-
-    camelToKebabCase(str: string) {
-        return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     }
 }

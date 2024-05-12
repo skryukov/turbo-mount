@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning].
 ### Added
 
 - Add a mount target to the base controller. ([@skryukov])
+- Add `registerComponents` helper for vite. ([@skryukov])
 
 ## [0.2.2] - 2024-05-09
 
