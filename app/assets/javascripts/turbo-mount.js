@@ -31,9 +31,13 @@ class TurboMountController extends Controller {
 }
 TurboMountController.values = {
     props: Object,
-    component: String
+    component: String,
 };
 TurboMountController.targets = ["mount"];
+
+const camelToKebabCase = (str) => {
+    return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+};
 
 class TurboMount {
     constructor(props) {
@@ -55,7 +59,7 @@ class TurboMount {
         }
         this.components.set(name, component);
         if (controller) {
-            const controllerName = `turbo-mount-${this.framework}-${this.camelToKebabCase(name)}`;
+            const controllerName = `turbo-mount-${this.framework}-${camelToKebabCase(name)}`;
             this.application.register(controllerName, controller);
         }
     }
@@ -65,9 +69,6 @@ class TurboMount {
             throw new Error(`Unknown component: ${name}`);
         }
         return component;
-    }
-    camelToKebabCase(str) {
-        return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
     }
 }
 

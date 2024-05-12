@@ -19,7 +19,7 @@
     "types": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/types",
     "build": "npm run types && rollup -c",
     "prerelease": "npm run clean && npm run build && git --no-pager diff && echo && npm pack --dry-run",
-    "copy": "cp dist/{*.js,*.map} ../../app/assets/javascripts/ && mkdir -p ../../app/assets/javascripts/turbo-mount && cp dist/plugins/* ../../app/assets/javascripts/turbo-mount/",
+    "copy": "cp dist/turbo-mount* ../../app/assets/javascripts/ && mkdir -p ../../app/assets/javascripts/turbo-mount && cp dist/plugins/* ../../app/assets/javascripts/turbo-mount/",
     "ci": "npm run lint && npm run build"
   },
   "module": "dist/turbo-mount.js",

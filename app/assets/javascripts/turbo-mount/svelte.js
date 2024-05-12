@@ -7,13 +7,15 @@ class TurboMountSvelteController extends TurboMountController {
     }
     mountComponent(el, Component, props) {
         const component = new Component({ target: el, props });
-        return () => { component.$destroy(); };
+        return () => {
+            component.$destroy();
+        };
     }
 }
 
 const plugin = {
     framework: "svelte",
-    controller: TurboMountSvelteController
+    controller: TurboMountSvelteController,
 };
 
 export { plugin as default };
