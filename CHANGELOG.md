@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning].
 
 - Add a mount target to the base controller. ([@skryukov])
 - Add `registerComponents` helper for vite. ([@skryukov])
+- Allow to omit the `application` property in the constructor. ([@skryukov])
+  `TurboMount` will try to find the application in the `window.Stimulus` and will initialize new one if not found.
 
 ## [0.2.2] - 2024-05-09
 

@@ -1,5 +1,5 @@
+import { TurboMountController, TurboMount } from 'turbo-mount';
 import { createApp } from 'vue';
-import { TurboMountController } from 'turbo-mount';
 
 class TurboMountVueController extends TurboMountController {
     constructor() {
@@ -19,5 +19,10 @@ const plugin = {
     framework: "vue",
     controller: TurboMountVueController,
 };
+class TurboMountVue extends TurboMount {
+    constructor(props) {
+        super(Object.assign(Object.assign({}, props), { plugin }));
+    }
+}
 
-export { plugin as default };
+export { TurboMountVue as TurboMount, TurboMountVue, plugin as default };

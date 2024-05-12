@@ -1,6 +1,6 @@
+import { TurboMountController, TurboMount } from 'turbo-mount';
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-import { TurboMountController } from 'turbo-mount';
 
 class TurboMountReactController extends TurboMountController {
     constructor() {
@@ -20,5 +20,10 @@ const plugin = {
     framework: "react",
     controller: TurboMountReactController,
 };
+class TurboMountReact extends TurboMount {
+    constructor(props) {
+        super(Object.assign(Object.assign({}, props), { plugin }));
+    }
+}
 
-export { plugin as default };
+export { TurboMountReact as TurboMount, TurboMountReact, plugin as default };

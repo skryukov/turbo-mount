@@ -2,6 +2,12 @@ import { Application, ControllerConstructor } from "@hotwired/stimulus";
 
 import { camelToKebabCase } from "./helpers";
 
+declare global {
+  interface Window {
+    Stimulus?: Application;
+  }
+}
+
 export interface ApplicationWithTurboMount<T> extends Application {
   turboMount: { [framework: string]: TurboMount<T> };
 }
@@ -11,17 +17,22 @@ export type Plugin = {
   controller: ControllerConstructor;
 };
 
+export type TurboMountProps = {
+  application?: Application;
+  plugin: Plugin;
+};
+
 export class TurboMount<T> {
   components: Map<string, T>;
   application: ApplicationWithTurboMount<T>;
   framework: string;
   baseController?: ControllerConstructor;
 
-  constructor(props: { application: Application; plugin: Plugin }) {
+  constructor({ application, plugin }: TurboMountProps) {
     this.components = new Map();
-    this.application = props.application as ApplicationWithTurboMount<T>;
-    this.framework = props.plugin.framework;
-    this.baseController = props.plugin.controller;
+    this.application = this.findOrStartApplication(application);
+    this.framework = plugin.framework;
+    this.baseController = plugin.controller;
 
     this.application.turboMount ||= {};
     this.application.turboMount[this.framework] = this;
@@ -32,6 +43,16 @@ export class TurboMount<T> {
         this.baseController,
       );
     }
+  }
+
+  private findOrStartApplication(hydratedApp?: Application) {
+    let application = hydratedApp || window.Stimulus;
+
+    if (!application) {
+      application = Application.start();
+      window.Stimulus = application;
+    }
+    return application as ApplicationWithTurboMount<T>;
   }
 
   register(name: string, component: T, controller?: ControllerConstructor) {
