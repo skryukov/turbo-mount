@@ -25,6 +25,7 @@
     "./react": "./dist/plugins/react.js",
     "./svelte": "./dist/plugins/svelte.js",
     "./vue": "./dist/plugins/vue.js",
+    "./vite": "./dist/vite.js",
     ".": "./dist/turbo-mount.js"
   },
   "files": [
@@ -40,17 +41,20 @@
     "react-dom": ">= 17.0",
     "rollup": "^2.79.1",
     "rollup-plugin-terser": "^7.0.2",
+    "stimulus-vite-helpers": ">= 3.0",
     "svelte": ">= 3.0",
     "tslib": "^2.6.2",
     "typescript": "^5.4.5",
+    "vite": "^5.2.11",
     "vue": ">= 3.0"
   },
   "dependencies": {
-    "@hotwired/stimulus": ">= 3.0"
+    "@hotwired/stimulus": "^3.2.2"
   },
   "peerDependencies": {
     "react": ">= 17.0",
     "react-dom": ">= 17.0",
+    "stimulus-vite-helpers": ">= 3.0",
     "svelte": ">= 3.0",
     "vue": ">= 3.0"
   },
@@ -65,6 +69,9 @@
       "optional": true
     },
     "vue": {
+      "optional": true
+    },
+    "stimulus-vite-helpers": {
       "optional": true
     }
   }

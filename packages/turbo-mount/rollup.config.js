@@ -9,7 +9,8 @@ const external = [
   "react",
   "react-dom/client",
   "vue",
-  'turbo-mount'
+  "turbo-mount",
+  "stimulus-vite-helpers"
 ]
 
 const plugins = [
@@ -31,6 +32,9 @@ const entrypoints = fs.readdirSync(pluginsPath).map(plugin => {
 entrypoints.unshift({
   input: path.join("src", "index.ts"),
   output: path.join("dist", "turbo-mount.js")
+},{
+  input: path.join("src", "vite.ts"),
+  output: path.join("dist", "vite.js")
 })
 
 const config = entrypoints.flatMap(({input, output}) => (
