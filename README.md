@@ -1,24 +1,53 @@
-# Turbo::Mount
+# Turbo Mount
 
 [![Gem Version](https://badge.fury.io/rb/turbo-mount.svg)](https://rubygems.org/gems/turbo-mount)
 
-`Turbo::Mount` is a simple gem that allows you to add highly interactive components from React, Vue, Svelte, and other frameworks to your Hotwire application.
+`TurboMount` is a simple library that allows you to add highly interactive components from React, Vue, Svelte, and other frameworks to your Hotwire application.
+
+## Table of Contents
+- [Installation](#installation)
+  - [Importmaps](#importmaps)
+- [Usage](#usage)
+  - [Initialization](#initialization)
+    - [Standard Initialization](#standard-initialization)
+    - [Simplified Initialization](#simplified-initialization)
+    - [Plugin-Specific Initialization](#plugin-specific-initialization)
+  - [View Helpers](#view-helpers)
+  - [Supported Frameworks](#supported-frameworks)
+  - [Custom Controllers](#custom-controllers)
+  - [Vite Integration](#vite-integration)
+  - [Mount Target](#mount-target)
+- [License](#license)
+
+<a href="https://evilmartians.com/?utm_source=turbo-mount&utm_campaign=project_page">
+<img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg" alt="Built by Evil Martians" width="236" height="54">
+</a>
 
 ## Installation
 
-Add the following line to your Gemfile:
+To install `TurboMount`, add the following line to your Gemfile:
 
 ```ruby
 gem "turbo-mount"
 ```
 
-For projects utilizing build tools such as [Vite](http://vite-ruby.netlify.app), also install `turbo-mount` package:
+If your project utilizes build tools such as [Vite](http://vite-ruby.netlify.app), also install the `turbo-mount` package:
 
 ```bash
 npm install turbo-mount
 # or with yarn
 yarn add turbo-mount
 ```
+
+### Importmaps
+To use `TurboMount` with importmaps, you need to pin the necessary JavaScript files in your `config/importmap.rb`:
+
+```ruby
+pin "turbo-mount", to: "turbo-mount.min.js"
+pin "turbo-mount/react", to: "turbo-mount/react.min.js"
+```
+
+This ensures that `turbo-mount` and its plugins are available in your application.
 
 ## Usage
 
@@ -28,7 +57,7 @@ To begin using `TurboMount`, start by initializing the library and registering t
 
 #### Standard Initialization
 
-Import the necessary modules and initialize ```TurboMount``` with your application and the desired plugin. Here's how to set it up with a React plugin:
+Import the necessary modules and initialize `TurboMount` with your application and the desired plugin. Here's how to set it up with a React plugin:
 
 ```js
 import { Application } from "@hotwired/stimulus";
@@ -81,22 +110,31 @@ Use the following helpers to mount components in your views:
 <%= turbo_mount_react_component("SketchPicker", props: {color: "#430"}) %>
 ```
 
+This will generate the following HTML:
+
+```html
+<div data-controller="turbo-mount-react-sketch-picker"
+     data-turbo-mount-react-sketch-picker-component-value="SketchPicker"
+     data-turbo-mount-react-sketch-picker-props-value="{&quot;color&quot;:&quot;#034&quot;}">
+</div>
+```
+
 ### Supported Frameworks
 
 `TurboMount` supports the following frameworks:
 
-- React `"turbo-mount/react"`
-- Vue `"turbo-mount/vue"`
-- Svelte `"turbo-mount/svelte"`
+- React: `"turbo-mount/react"`
+- Vue: `"turbo-mount/vue"`
+- Svelte: `"turbo-mount/svelte"`
 
-It's possible to add support for other frameworks by creating custom controller class extending `TurboMountController` and providing a plugin. See included plugins for examples.
+To add support for other frameworks, create a custom controller class extending `TurboMountController` and provide a plugin. See included plugins for examples.
 
 ### Custom Controllers
 
 To customize component behavior or pass functions as props, create a custom controller:
 
 ```js
-import { TurboMountReactController } from "turbo-mount"
+import { TurboMountReactController } from "turbo-mount";
 
 export default class extends TurboMountReactController {
   get componentProps() {
@@ -112,24 +150,24 @@ export default class extends TurboMountReactController {
 }
 ```
 
-Then pass this controller the register method:
+Then pass this controller to the register method:
 
 ```js
-import SketchController from "controllers/turbo_mount/sketch_picker_controller"
+import SketchController from "controllers/turbo_mount/sketch_picker_controller";
 
 turboMount.register('SketchPicker', SketchPicker, SketchController);
 ```
 
 ### Vite Integration
 
-`TurboMount` includes a `registerComponents` function that automates the loading of components (requires `stimulus-vite-helpers` package). It also accepts an optional `controllers` property to autoload customized controllers:
+`TurboMount` includes a `registerComponents` function that automates the loading of components (requires the `stimulus-vite-helpers` package). It also accepts an optional `controllers` property to autoload customized controllers:
 
 ```js
 import { TurboMount } from "turbo-mount/react";
 import { registerComponents } from "turbo-mount/vite";
 
 const controllers = import.meta.glob("./**/*_controller.js", { eager: true });
-const components = import.meta.glob(`/components/**/*.jsx`, { eager: true });
+const components = import.meta.glob("/components/**/*.jsx", { eager: true });
 
 const turboMount = new TurboMount();
 registerComponents({ turboMount, components, controllers });
@@ -142,7 +180,7 @@ The `registerComponents` helper searches for controllers in the following paths:
 - `controllers/turbo-mount/${controllerName}`
 - `controllers/turbo-mount-${controllerName}`
 
-### Mount target
+### Mount Target
 
 To specify a non-root mount target, use the `data-<%= controller_name %>-target="mount"` attribute:
 
@@ -152,16 +190,6 @@ To specify a non-root mount target, use the `data-<%= controller_name %>-target=
   <div data-<%= controller_name %>-target="mount"></div>
 <% end %>
 ```
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/skryukov/turbo-mount.
 
 ## License
 
