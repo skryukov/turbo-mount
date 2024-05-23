@@ -1,0 +1,16 @@
+import { TurboMount<%= framework.capitalize %> } from "turbo-mount/<%= framework %>";
+
+const turboMount = new TurboMount<%= framework.capitalize %>();
+
+// to register a component use:
+// turboMount.register("Hello", Hello); // where Hello is the imported the component
+
+// to override the default controller use:
+// turboMount.register("Hello", Hello, HelloController); // where HelloController is a Stimulus controller extended from TurboMount<%= framework.capitalize %>Controller
+<%- if vite? -%>
+
+// If you want to automatically register components use:
+// const controllers = import.meta.glob("/controllers/**/*_controller.js", { eager: true });
+// const components = import.meta.glob("/components/**/*.jsx", { eager: true });
+// registerComponents({ turboMount, components, controllers });
+<%- end -%>

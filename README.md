@@ -25,11 +25,25 @@
 
 ## Installation
 
-To install `TurboMount`, add the following line to your Gemfile:
+To install Turbo Mount, add the following line to your `Gemfile` and run `bundle install`:
 
 ```ruby
 gem "turbo-mount"
 ```
+
+### Automatic Installation
+
+Run the following command to install the necessary files:
+
+```bash
+bin/rails generate turbo_mount:install
+```
+
+This will add `turbo-mount` package and framework dependencies to your `package.json` or `importmap.rb`, and create the Turbo Mount initialization file.
+
+### Manual Installation
+
+You can also install the necessary JavaScript files manually.
 
 If your project utilizes build tools such as [Vite](http://vite-ruby.netlify.app), also install the `turbo-mount` package:
 
@@ -37,7 +51,16 @@ If your project utilizes build tools such as [Vite](http://vite-ruby.netlify.app
 npm install turbo-mount
 # or with yarn
 yarn add turbo-mount
+
+# and the desired framework
+npm install react react-dom
+# or
+npm install vue
+# or
+npm install svelte
 ```
+
+If you're using Vite, don't forget to add [framework-specific plugins](https://vitejs.dev/plugins) to your `vite.config.js`.
 
 ### Importmaps
 To use `TurboMount` with importmaps, you need to pin the necessary JavaScript files in your `config/importmap.rb`:
@@ -48,6 +71,18 @@ pin "turbo-mount/react", to: "turbo-mount/react.min.js"
 ```
 
 This ensures that `turbo-mount` and its plugins are available in your application.
+
+Also pin the desired framework:
+
+```bash
+bin/importmap pin react react-dom react-dom/client
+# or
+bin/importmap pin vue
+# or
+bin/importmap pin svelte
+```
+
+Note: Importmap-only mode is quite limited in terms of JavaScript dependencies. If you're using a more complex setup, consider using a bundler like Vite.
 
 ## Usage
 
