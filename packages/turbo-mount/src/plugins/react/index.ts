@@ -1,18 +1,21 @@
-import { Plugin, TurboMount, TurboMountProps } from "turbo-mount";
+import { buildRegisterFunction, Plugin, TurboMount } from "turbo-mount";
+import { ComponentType, createElement } from "react";
+import { createRoot } from "react-dom/client";
 
-import { TurboMountReactController } from "./turbo-mount-react-controller";
+const plugin: Plugin<ComponentType> = {
+  mountComponent: (mountProps) => {
+    const { el, Component, props } = mountProps;
+    const root = createRoot(el);
+    root.render(createElement(Component, props));
 
-const plugin: Plugin = {
-  framework: "react",
-  controller: TurboMountReactController,
+    return () => {
+      root.unmount();
+    };
+  },
 };
 
-export class TurboMountReact<T> extends TurboMount<T> {
-  constructor(props: Omit<TurboMountProps, "plugin">) {
-    super({ ...props, plugin });
-  }
-}
+const registerComponent = buildRegisterFunction(plugin);
 
-export { TurboMountReact as TurboMount };
+export { TurboMount, registerComponent };
 
 export default plugin;

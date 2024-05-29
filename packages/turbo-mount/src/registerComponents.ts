@@ -1,36 +1,31 @@
 import { definitionsFromGlob } from "stimulus-vite-helpers";
 import { Definition } from "@hotwired/stimulus";
 
-import { TurboMount } from "turbo-mount";
+import { TurboMount, Plugin } from "turbo-mount";
 
 import { camelToKebabCase } from "./helpers";
 
 type ComponentModule = { default: never } | never;
 
-type RegisterComponentsProps = {
-  turboMount: TurboMount<unknown>;
+type RegisterComponentsProps<T> = {
+  plugin: Plugin<T>;
+  turboMount: TurboMount;
   components: Record<string, ComponentModule>;
   controllers?: Record<string, Definition>;
 };
 
-const identifierNames = (name: string, turboMount: TurboMount<unknown>) => {
+const identifierNames = (name: string) => {
   const controllerName = camelToKebabCase(name);
-  const framework = turboMount.framework;
 
-  return [
-    `turbo-mount--${framework}--${controllerName}`,
-    `turbo-mount--${framework}-${controllerName}`,
-    `turbo-mount-${framework}-${controllerName}`,
-    `turbo-mount--${controllerName}`,
-    `turbo-mount-${controllerName}`,
-  ];
+  return [`turbo-mount--${controllerName}`, `turbo-mount-${controllerName}`];
 };
 
-export const registerComponents = ({
+export const registerComponents = <T>({
+  plugin,
   turboMount,
   components,
   controllers,
-}: RegisterComponentsProps) => {
+}: RegisterComponentsProps<T>) => {
   const controllerModules = controllers ? definitionsFromGlob(controllers) : [];
 
   for (const [componentPath, componentModule] of Object.entries(components)) {
@@ -38,7 +33,7 @@ export const registerComponents = ({
       .replace(/\.\w*$/, "")
       .replace(/^[./]*components\//, "");
 
-    const identifiers = identifierNames(name, turboMount);
+    const identifiers = identifierNames(name);
 
     const controller = controllerModules.find(({ identifier }) =>
       identifiers.includes(identifier),
@@ -46,9 +41,19 @@ export const registerComponents = ({
     const component = componentModule.default ?? componentModule;
 
     if (controller) {
-      turboMount.register(name, component, controller.controllerConstructor);
+      turboMount.register(
+        plugin,
+        name,
+        component,
+        controller.controllerConstructor,
+      );
     } else {
-      turboMount.register(name, component);
+      turboMount.register(plugin, name, component);
     }
   }
+};
+
+export const buildRegisterComponentsFunction = <T>(plugin: Plugin<T>) => {
+  return (props: Omit<RegisterComponentsProps<T>, "plugin">) =>
+    registerComponents({ plugin, ...props });
 };

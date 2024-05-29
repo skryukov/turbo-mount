@@ -88,69 +88,35 @@ Note: Importmap-only mode is quite limited in terms of JavaScript dependencies. 
 
 ### Initialization
 
-To begin using `TurboMount`, start by initializing the library and registering the components you intend to use. Below are the steps to set up `TurboMount` with different configurations.
-
-#### Standard Initialization
-
-Import the necessary modules and initialize `TurboMount` with your application and the desired plugin. Here's how to set it up with a React plugin:
-
-```js
-import { Application } from "@hotwired/stimulus";
-import { TurboMount } from "turbo-mount";
-import plugin from "turbo-mount/react";
-import { SketchPicker } from 'react-color';
-
-const application = Application.start();
-const turboMount = new TurboMount({ application, plugin });
-
-turboMount.register('SketchPicker', SketchPicker);
-```
-
-#### Simplified Initialization
-
-If you prefer not to specify the `application` explicitly, `TurboMount` can automatically detect or initialize it. This approach uses the `window.Stimulus` if available; otherwise, it initializes a new Stimulus application:
+To begin using `TurboMount`, start by initializing the library and registering the components you intend to use. Here's how to set it up with a React plugin:
 
 ```js
 import { TurboMount } from "turbo-mount";
-import plugin from "turbo-mount/react";
-import { SketchPicker } from 'react-color';
+import { registerComponent } from "turbo-mount/react";
+import { HexColorPicker } from 'react-colorful';
 
-const turboMount = new TurboMount({ plugin });
+const turboMount = new TurboMount(); // or new TurboMount({ application })
 
-turboMount.register('SketchPicker', SketchPicker);
+registerComponent(turboMount, "HexColorPicker", HexColorPicker);
 ```
 
-#### Plugin-Specific Initialization
-
-For a more streamlined setup, you can directly import a specialized version of `TurboMount`:
-
-```js
-import { TurboMountReact } from "turbo-mount/react";
-import { SketchPicker } from 'react-color';
-
-const turboMount = new TurboMountReact();
-
-turboMount.register('SketchPicker', SketchPicker);
-```
+If you prefer not to specify the `application` explicitly, `TurboMount` can automatically detect or initialize it. Turbo Mount uses the `window.Stimulus` if available; otherwise, it initializes a new Stimulus application.
 
 ### View Helpers
 
 Use the following helpers to mount components in your views:
 
 ```erb
-<%= turbo_mount_component("SketchPicker", framework: "react", props: {color: "#034"}) %>
-
-<%# or using alias %>
-
-<%= turbo_mount_react_component("SketchPicker", props: {color: "#430"}) %>
+<%= turbo_mount("HexColorPicker", props: {color: "#034"}, class: "mb-5") %>
 ```
 
 This will generate the following HTML:
 
 ```html
-<div data-controller="turbo-mount-react-sketch-picker"
-     data-turbo-mount-react-sketch-picker-component-value="SketchPicker"
-     data-turbo-mount-react-sketch-picker-props-value="{&quot;color&quot;:&quot;#034&quot;}">
+<div data-controller="turbo-mount-hex-color-picker"
+     data-turbo-mount-hex-color-picker-component-value="HexColorPicker"
+     data-turbo-mount-hex-color-picker-props-value="{&quot;color&quot;:&quot;#034&quot;}"
+     class="mb-5">
 </div>
 ```
 
@@ -162,16 +128,16 @@ This will generate the following HTML:
 - Vue: `"turbo-mount/vue"`
 - Svelte: `"turbo-mount/svelte"`
 
-To add support for other frameworks, create a custom controller class extending `TurboMountController` and provide a plugin. See included plugins for examples.
+To add support for other frameworks, create a custom plugin. See included plugins for examples.
 
 ### Custom Controllers
 
 To customize component behavior or pass functions as props, create a custom controller:
 
 ```js
-import { TurboMountReactController } from "turbo-mount";
+import { TurboMountController } from "turbo-mount";
 
-export default class extends TurboMountReactController {
+export default class extends TurboMountController {
   get componentProps() {
     return {
       ...this.propsValue,
@@ -180,17 +146,19 @@ export default class extends TurboMountReactController {
   }
 
   onChange = (color) => {
-    this.propsValue = { ...this.propsValue, color: color.hex };
+    // same as this.propsValue = { ...this.propsValue, color };
+    // but skips the rerendering of the component:
+    this.componentProps = { ...this.propsValue, color };
   };
 }
 ```
 
-Then pass this controller to the register method:
+Then pass this controller to the `registerComponent` method:
 
 ```js
-import SketchController from "controllers/turbo_mount/sketch_picker_controller";
+import HexColorPickerController from "controllers/turbo_mount/hex_color_picker_controller";
 
-turboMount.register('SketchPicker', SketchPicker, SketchController);
+registerComponent(turboMount, "HexColorPicker", HexColorPicker, HexColorPickerController);
 ```
 
 ### Vite Integration
@@ -199,7 +167,7 @@ turboMount.register('SketchPicker', SketchPicker, SketchController);
 
 ```js
 import { TurboMount } from "turbo-mount/react";
-import { registerComponents } from "turbo-mount/vite";
+import { registerComponents } from "turbo-mount/registerComponents/react";
 
 const controllers = import.meta.glob("./**/*_controller.js", { eager: true });
 const components = import.meta.glob("/components/**/*.jsx", { eager: true });
@@ -209,9 +177,6 @@ registerComponents({ turboMount, components, controllers });
 ```
 
 The `registerComponents` helper searches for controllers in the following paths:
-- `controllers/turbo-mount/${framework}/${controllerName}`
-- `controllers/turbo-mount/${framework}-${controllerName}`
-- `controllers/turbo-mount-${framework}-${controllerName}`
 - `controllers/turbo-mount/${controllerName}`
 - `controllers/turbo-mount-${controllerName}`
 
@@ -220,7 +185,7 @@ The `registerComponents` helper searches for controllers in the following paths:
 To specify a non-root mount target, use the `data-<%= controller_name %>-target="mount"` attribute:
 
 ```erb
-<%= turbo_mount_react_component("SketchPicker", props: {color: "#430"}) do |controller_name| %>
+<%= turbo_mount("HexColorPicker", props: {color: "#430"}) do |controller_name| %>
   <h3>Color picker</h3>
   <div data-<%= controller_name %>-target="mount"></div>
 <% end %>

@@ -1,17 +1,19 @@
-import { Plugin, TurboMount, TurboMountProps } from "turbo-mount";
+import { buildRegisterFunction, Plugin, TurboMount } from "turbo-mount";
+import { ComponentType } from "svelte";
 
-import { TurboMountSvelteController } from "./turbo-mount-svelte-controller";
+const plugin: Plugin<ComponentType> = {
+  mountComponent: (mountProps) => {
+    const { el, Component, props } = mountProps;
+    const component = new Component({ target: el, props });
 
-const plugin: Plugin = {
-  framework: "svelte",
-  controller: TurboMountSvelteController,
+    return () => {
+      component.$destroy();
+    };
+  },
 };
 
-export class TurboMountSvelte<T> extends TurboMount<T> {
-  constructor(props: Omit<TurboMountProps, "plugin">) {
-    super({ ...props, plugin });
-  }
-}
+const registerComponent = buildRegisterFunction(plugin);
 
-export { TurboMountSvelte as TurboMount };
+export { TurboMount, registerComponent };
+
 export default plugin;

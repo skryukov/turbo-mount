@@ -1,6 +1,10 @@
 import { Controller, Application } from '@hotwired/stimulus';
 
 class TurboMountController extends Controller {
+    constructor() {
+        super(...arguments);
+        this.skipPropsChangeCallback = false;
+    }
     connect() {
         this._umountComponentCallback || (this._umountComponentCallback = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps));
     }
@@ -8,6 +12,10 @@ class TurboMountController extends Controller {
         this.umountComponent();
     }
     propsValueChanged() {
+        if (this.skipPropsChangeCallback) {
+            this.skipPropsChangeCallback = false;
+            return;
+        }
         this.umountComponent();
         this._umountComponentCallback || (this._umountComponentCallback = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps));
     }
@@ -18,15 +26,25 @@ class TurboMountController extends Controller {
         return this.hasMountTarget ? this.mountTarget : this.element;
     }
     get resolvedComponent() {
-        return this.resolveComponent(this.componentValue);
+        return this.resolveMounted(this.componentValue).component;
+    }
+    get resolvedPlugin() {
+        return this.resolveMounted(this.componentValue).plugin;
     }
     umountComponent() {
         this._umountComponentCallback && this._umountComponentCallback();
         this._umountComponentCallback = undefined;
     }
-    resolveComponent(component) {
+    mountComponent(el, Component, props) {
+        return this.resolvedPlugin.mountComponent({ el, Component, props });
+    }
+    resolveMounted(component) {
         const app = this.application;
-        return app.turboMount[this.framework].resolve(component);
+        return app.turboMount.resolve(component);
+    }
+    setComponentProps(props) {
+        this.skipPropsChangeCallback = true;
+        this.propsValue = props;
     }
 }
 TurboMountController.values = {
@@ -40,34 +58,30 @@ const camelToKebabCase = (str) => {
 };
 
 class TurboMount {
-    constructor({ application, plugin }) {
-        var _a;
+    constructor(props = {}) {
         this.components = new Map();
-        this.application = this.findOrStartApplication(application);
-        this.framework = plugin.framework;
-        this.baseController = plugin.controller;
-        (_a = this.application).turboMount || (_a.turboMount = {});
-        this.application.turboMount[this.framework] = this;
-        if (this.baseController) {
-            this.application.register(`turbo-mount-${this.framework}`, this.baseController);
-        }
+        this.application = this.findOrStartApplication(props.application);
+        this.application.turboMount = this;
+        this.application.register("turbo-mount", TurboMountController);
+        document.addEventListener("turbo:before-morph-element", (event) => {
+            var _a;
+            const turboMorphEvent = event;
+            const { target, detail } = turboMorphEvent;
+            if ((_a = target.getAttribute("data-controller")) === null || _a === void 0 ? void 0 : _a.includes("turbo-mount")) {
+                target.setAttribute("data-turbo-mount-props-value", detail.newElement.getAttribute("data-turbo-mount-props-value") ||
+                    "{}");
+                event.preventDefault();
+            }
+        });
     }
-    findOrStartApplication(hydratedApp) {
-        let application = hydratedApp || window.Stimulus;
-        if (!application) {
-            application = Application.start();
-            window.Stimulus = application;
-        }
-        return application;
-    }
-    register(name, component, controller) {
-        controller || (controller = this.baseController);
+    register(plugin, name, component, controller) {
+        controller || (controller = TurboMountController);
         if (this.components.has(name)) {
             throw new Error(`Component '${name}' is already registered.`);
         }
-        this.components.set(name, component);
+        this.components.set(name, { component, plugin });
         if (controller) {
-            const controllerName = `turbo-mount-${this.framework}-${camelToKebabCase(name)}`;
+            const controllerName = `turbo-mount-${camelToKebabCase(name)}`;
             this.application.register(controllerName, controller);
         }
     }
@@ -78,6 +92,19 @@ class TurboMount {
         }
         return component;
     }
+    findOrStartApplication(hydratedApp) {
+        let application = hydratedApp || window.Stimulus;
+        if (!application) {
+            application = Application.start();
+            window.Stimulus = application;
+        }
+        return application;
+    }
+}
+function buildRegisterFunction(plugin) {
+    return (turboMount, name, component, controller) => {
+        turboMount.register(plugin, name, component, controller);
+    };
 }
 
-export { TurboMount, TurboMountController };
+export { TurboMount, TurboMountController, buildRegisterFunction };

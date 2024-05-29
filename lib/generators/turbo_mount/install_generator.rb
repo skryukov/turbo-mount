@@ -65,8 +65,8 @@ module TurboMount
 
         say "Pinning Turbo Mount to the importmap"
         append_to_file "config/importmap.rb", %(pin "turbo-mount", to: "turbo-mount.min.js"\n)
-        append_to_file "config/importmap.rb", %(pin "turbo-mount-initializer"\n)
         append_to_file "config/importmap.rb", %(pin "turbo-mount/#{framework}", to: "turbo-mount/#{framework}.min.js"\n)
+        append_to_file "config/importmap.rb", %(pin "turbo-mount-initializer"\n)
 
         say "Pinning framework dependencies to the importmap"
         run "bin/importmap pin #{FRAMEWORKS[framework][:pins]}"

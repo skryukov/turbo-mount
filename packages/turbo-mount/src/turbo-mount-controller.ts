@@ -1,21 +1,19 @@
 import { Controller } from "@hotwired/stimulus";
 import { ApplicationWithTurboMount } from "./turbo-mount";
 
-export abstract class TurboMountController<T> extends Controller {
+export class TurboMountController extends Controller {
   static values = {
     props: Object,
     component: String,
   };
   static targets = ["mount"];
 
-  declare readonly propsValue: object;
-  declare readonly componentValue: string;
+  private skipPropsChangeCallback = false;
+
+  declare propsValue: object;
+  declare componentValue: string;
   declare readonly hasMountTarget: boolean;
   declare readonly mountTarget: Element;
-
-  abstract framework: string;
-
-  abstract mountComponent(el: Element, Component: T, props: object): () => void;
 
   _umountComponentCallback?: () => void;
 
@@ -32,6 +30,12 @@ export abstract class TurboMountController<T> extends Controller {
   }
 
   propsValueChanged() {
+    // Prevent re-mounting the component if the props are being set by the component itself
+    if (this.skipPropsChangeCallback) {
+      this.skipPropsChangeCallback = false;
+      return;
+    }
+
     this.umountComponent();
     this._umountComponentCallback ||= this.mountComponent(
       this.mountElement,
@@ -49,7 +53,11 @@ export abstract class TurboMountController<T> extends Controller {
   }
 
   get resolvedComponent() {
-    return this.resolveComponent(this.componentValue);
+    return this.resolveMounted(this.componentValue).component;
+  }
+
+  get resolvedPlugin() {
+    return this.resolveMounted(this.componentValue).plugin;
   }
 
   umountComponent() {
@@ -57,8 +65,17 @@ export abstract class TurboMountController<T> extends Controller {
     this._umountComponentCallback = undefined;
   }
 
-  resolveComponent(component: string): T {
-    const app = this.application as ApplicationWithTurboMount<T>;
-    return app.turboMount[this.framework].resolve(component);
+  mountComponent(el: Element, Component: unknown, props: object) {
+    return this.resolvedPlugin.mountComponent({ el, Component, props });
+  }
+
+  resolveMounted(component: string) {
+    const app = this.application as ApplicationWithTurboMount;
+    return app.turboMount.resolve(component);
+  }
+
+  setComponentProps(props: object) {
+    this.skipPropsChangeCallback = true;
+    this.propsValue = props;
   }
 }

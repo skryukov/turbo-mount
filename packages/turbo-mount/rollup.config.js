@@ -4,13 +4,17 @@ import alias from '@rollup/plugin-alias';
 import typescript from "@rollup/plugin-typescript";
 import {terser} from "rollup-plugin-terser";
 
+const pluginsPath = path.resolve(__dirname, 'src', 'plugins');
+
 const external = [
   "@hotwired/stimulus",
   "react",
   "react-dom/client",
   "vue",
   "turbo-mount",
-  "stimulus-vite-helpers"
+  "turbo-mount/registerComponents",
+  "stimulus-vite-helpers",
+  ...fs.readdirSync(pluginsPath).map(plugin => `turbo-mount/${plugin}`)
 ]
 
 const plugins = [
@@ -22,19 +26,25 @@ const plugins = [
   }),
 ]
 
-const pluginsPath = path.resolve(__dirname, 'src', 'plugins');
-const entrypoints = fs.readdirSync(pluginsPath).map(plugin => {
-  const input = path.join(pluginsPath, plugin, 'index.ts');
-  const output = path.join('dist', 'plugins', `${plugin}.js`);
-  return {input, output}
+const entrypoints = fs.readdirSync(pluginsPath).flatMap(plugin => {
+  return [
+    {
+      input: path.join(pluginsPath, plugin, 'index.ts'),
+      output: path.join('dist', 'plugins', `${plugin}.js`)
+    },
+    {
+      input: path.join(pluginsPath, plugin, 'registerComponents.ts'),
+      output: path.join('dist', 'registerComponents', `${plugin}.js`)
+    }
+  ]
 });
 
 entrypoints.unshift({
   input: path.join("src", "index.ts"),
   output: path.join("dist", "turbo-mount.js")
-},{
-  input: path.join("src", "vite.ts"),
-  output: path.join("dist", "vite.js")
+}, {
+  input: path.join("src", "registerComponents.ts"),
+  output: path.join("dist", "registerComponents.js")
 })
 
 const config = entrypoints.flatMap(({input, output}) => (

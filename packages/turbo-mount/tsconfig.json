@@ -16,7 +16,9 @@
     "noEmit": false,
     "declaration": false,
     "paths": {
-      "turbo-mount": ["src/index"]
+      "turbo-mount": ["src/index"],
+      "turbo-mount/registerComponents": ["src/registerComponents"],
+      "turbo-mount/*": ["src/plugins/*"]
     },
     "types": [
       "vite/client"

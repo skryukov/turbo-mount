@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Installation script. ([@skryukov])
+
+### Changed
+
+- [BREAKING] New API without controller inheritance. ([@skryukov])
+  To migrate to the new API:
+  - Replace `new TurboMountReact()` (or any other framework specific constructor) with `new TurboMount()`
+  - Replace `turboMount.register(...)` with `registerComponent(turboMount, ...)`
+  - Replace `turbo_mount_react_component` (or any other framework specific helper) with `turbo_mount`
+  - Also see the new API for plugins and custom controllers in the README.
+
 ## [0.2.3] - 2024-05-12
 
 ### Added
