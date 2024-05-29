@@ -28,7 +28,10 @@
     "./react": "./dist/plugins/react.js",
     "./svelte": "./dist/plugins/svelte.js",
     "./vue": "./dist/plugins/vue.js",
-    "./vite": "./dist/vite.js",
+    "./registerComponents/react": "./dist/registerComponents/react.js",
+    "./registerComponents/svelte": "./dist/registerComponents/svelte.js",
+    "./registerComponents/vue": "./dist/registerComponents/vue.js",
+    "./registerComponents": "./dist/registerComponents.js",
     ".": "./dist/turbo-mount.js"
   },
   "files": [

@@ -1,6 +1,7 @@
 import { Application, ControllerConstructor } from "@hotwired/stimulus";
 
 import { camelToKebabCase } from "./helpers";
+import { TurboMountController } from "./turbo-mount-controller";
 
 declare global {
   interface Window {
@@ -8,62 +9,73 @@ declare global {
   }
 }
 
-export interface ApplicationWithTurboMount<T> extends Application {
-  turboMount: { [framework: string]: TurboMount<T> };
+export interface ApplicationWithTurboMount extends Application {
+  turboMount: TurboMount;
 }
 
-export type Plugin = {
-  framework: string;
-  controller: ControllerConstructor;
+export type MountComponentProps<T> = {
+  el: Element;
+  Component: T;
+  props: object;
+};
+
+export type Plugin<T> = {
+  mountComponent: (props: MountComponentProps<T>) => () => void;
 };
 
 export type TurboMountProps = {
   application?: Application;
-  plugin: Plugin;
 };
 
-export class TurboMount<T> {
-  components: Map<string, T>;
-  application: ApplicationWithTurboMount<T>;
-  framework: string;
-  baseController?: ControllerConstructor;
+type TurboMountComponents<T> = Map<string, { component: T; plugin: Plugin<T> }>;
 
-  constructor({ application, plugin }: TurboMountProps) {
+interface TurboMorphEvent extends CustomEvent {
+  target: Element;
+  detail: {
+    newElement: Element;
+  };
+}
+
+export class TurboMount {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  components: TurboMountComponents<any>;
+  application: ApplicationWithTurboMount;
+
+  constructor(props: TurboMountProps = {}) {
     this.components = new Map();
-    this.application = this.findOrStartApplication(application);
-    this.framework = plugin.framework;
-    this.baseController = plugin.controller;
+    this.application = this.findOrStartApplication(props.application);
+    this.application.turboMount = this;
+    this.application.register("turbo-mount", TurboMountController);
 
-    this.application.turboMount ||= {};
-    this.application.turboMount[this.framework] = this;
+    document.addEventListener("turbo:before-morph-element", (event) => {
+      const turboMorphEvent = event as unknown as TurboMorphEvent;
+      const { target, detail } = turboMorphEvent;
 
-    if (this.baseController) {
-      this.application.register(
-        `turbo-mount-${this.framework}`,
-        this.baseController,
-      );
-    }
+      if (target.getAttribute("data-controller")?.includes("turbo-mount")) {
+        target.setAttribute(
+          "data-turbo-mount-props-value",
+          detail.newElement.getAttribute("data-turbo-mount-props-value") ||
+            "{}",
+        );
+        event.preventDefault();
+      }
+    });
   }
 
-  private findOrStartApplication(hydratedApp?: Application) {
-    let application = hydratedApp || window.Stimulus;
-
-    if (!application) {
-      application = Application.start();
-      window.Stimulus = application;
-    }
-    return application as ApplicationWithTurboMount<T>;
-  }
-
-  register(name: string, component: T, controller?: ControllerConstructor) {
-    controller ||= this.baseController;
+  register<T>(
+    plugin: Plugin<T>,
+    name: string,
+    component: T,
+    controller?: ControllerConstructor,
+  ) {
+    controller ||= TurboMountController;
     if (this.components.has(name)) {
       throw new Error(`Component '${name}' is already registered.`);
     }
-    this.components.set(name, component);
+    this.components.set(name, { component, plugin });
 
     if (controller) {
-      const controllerName = `turbo-mount-${this.framework}-${camelToKebabCase(name)}`;
+      const controllerName = `turbo-mount-${camelToKebabCase(name)}`;
       this.application.register(controllerName, controller);
     }
   }
@@ -75,4 +87,25 @@ export class TurboMount<T> {
     }
     return component;
   }
+
+  private findOrStartApplication(hydratedApp?: Application) {
+    let application = hydratedApp || window.Stimulus;
+
+    if (!application) {
+      application = Application.start();
+      window.Stimulus = application;
+    }
+    return application as ApplicationWithTurboMount;
+  }
+}
+
+export function buildRegisterFunction<T>(plugin: Plugin<T>) {
+  return (
+    turboMount: TurboMount,
+    name: string,
+    component: T,
+    controller?: ControllerConstructor,
+  ) => {
+    turboMount.register(plugin, name, component, controller);
+  };
 }

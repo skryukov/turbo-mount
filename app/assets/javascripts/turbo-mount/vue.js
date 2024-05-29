@@ -1,28 +1,17 @@
-import { TurboMountController, TurboMount } from 'turbo-mount';
+import { buildRegisterFunction } from 'turbo-mount';
+export { TurboMount } from 'turbo-mount';
 import { createApp } from 'vue';
 
-class TurboMountVueController extends TurboMountController {
-    constructor() {
-        super(...arguments);
-        this.framework = "vue";
-    }
-    mountComponent(el, Component, props) {
+const plugin = {
+    mountComponent: (mountProps) => {
+        const { el, Component, props } = mountProps;
         const app = createApp(Component, props);
         app.mount(el);
         return () => {
             app.unmount();
         };
-    }
-}
-
-const plugin = {
-    framework: "vue",
-    controller: TurboMountVueController,
+    },
 };
-class TurboMountVue extends TurboMount {
-    constructor(props) {
-        super(Object.assign(Object.assign({}, props), { plugin }));
-    }
-}
+const registerComponent = buildRegisterFunction(plugin);
 
-export { TurboMountVue as TurboMount, TurboMountVue, plugin as default };
+export { plugin as default, registerComponent };
