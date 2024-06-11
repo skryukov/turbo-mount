@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix entrypoint issue in the install generator. ([@skryukov])
+
 ## [0.3.0] - 2024-05-31
 
 ### Added

@@ -54,7 +54,11 @@ module TurboMount
 
         say "Creating Turbo Mount initializer"
         template "turbo-mount.js", File.join("app/javascript/turbo-mount.js")
-        append_to_file "app/javascript/entrypoints/application.js", %(import "./turbo-mount"\n)
+        begin
+          append_to_file js_entrypoint, %(import "./turbo-mount"\n)
+        rescue
+          say 'Could not find the application entrypoint, please add `import "./turbo-mount"` manually.', :yellow
+        end
         warn_about_vite_plugin if vite?
       end
 
@@ -70,6 +74,14 @@ module TurboMount
 
         say "Pinning framework dependencies to the importmap"
         run "bin/importmap pin #{FRAMEWORKS[framework][:pins]}"
+      end
+
+      def js_entrypoint
+        if vite?
+          "app/javascript/entrypoints/application.js"
+        else
+          "app/javascript/application.js"
+        end
       end
 
       def vite?
