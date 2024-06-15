@@ -148,7 +148,7 @@ export default class extends TurboMountController {
   onChange = (color) => {
     // same as this.propsValue = { ...this.propsValue, color };
     // but skips the rerendering of the component:
-    this.componentProps = { ...this.propsValue, color };
+    this.setComponentProps({ ...this.propsValue, color })
   };
 }
 ```
