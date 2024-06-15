@@ -91,6 +91,8 @@ Note: Importmap-only mode is quite limited in terms of JavaScript dependencies. 
 To begin using `TurboMount`, start by initializing the library and registering the components you intend to use. Here's how to set it up with a React plugin:
 
 ```js
+// app/javascript/turbo-mount.js
+
 import { TurboMount } from "turbo-mount";
 import { registerComponent } from "turbo-mount/react";
 import { HexColorPicker } from 'react-colorful';
@@ -100,7 +102,14 @@ const turboMount = new TurboMount(); // or new TurboMount({ application })
 registerComponent(turboMount, "HexColorPicker", HexColorPicker);
 ```
 
-If you prefer not to specify the `application` explicitly, `TurboMount` can automatically detect or initialize it. Turbo Mount uses the `window.Stimulus` if available; otherwise, it initializes a new Stimulus application.
+If you prefer not to specify the `application` explicitly, `TurboMount` can automatically detect or initialize it. Turbo Mount uses the `window.Stimulus` if available; otherwise, it initializes a new Stimulus application.  
+
+Make sure your `application.js` is importing `turbo-mount.js`:
+```js
+import "@hotwired/turbo-rails"
+import "./controllers"
+import "./turbo-mount"  // <------
+```
 
 ### View Helpers
 
