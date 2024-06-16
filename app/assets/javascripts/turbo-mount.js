@@ -107,4 +107,27 @@ function buildRegisterFunction(plugin) {
     };
 }
 
-export { TurboMount, TurboMountController, buildRegisterFunction };
+const identifierNames = (name) => {
+    const controllerName = camelToKebabCase(name);
+    return [`turbo-mount--${controllerName}`, `turbo-mount-${controllerName}`];
+};
+const registerComponentsBase = ({ plugin, turboMount, components, controllers, }) => {
+    var _a;
+    const controllerModules = controllers !== null && controllers !== void 0 ? controllers : [];
+    for (const { module, filename } of components) {
+        const name = filename
+            .replace(/\.\w*$/, "")
+            .replace(/^[./]*components\//, "");
+        const identifiers = identifierNames(name);
+        const controller = controllerModules.find(({ identifier }) => identifiers.includes(identifier));
+        const component = (_a = module.default) !== null && _a !== void 0 ? _a : module;
+        if (controller) {
+            turboMount.register(plugin, name, component, controller.controllerConstructor);
+        }
+        else {
+            turboMount.register(plugin, name, component);
+        }
+    }
+};
+
+export { TurboMount, TurboMountController, buildRegisterFunction, registerComponentsBase };
