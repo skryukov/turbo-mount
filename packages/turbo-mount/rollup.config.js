@@ -45,6 +45,12 @@ entrypoints.unshift({
 }, {
   input: path.join("src", "registerComponents.ts"),
   output: path.join("dist", "registerComponents.js")
+}, {
+  input: path.join("src", "registerComponents/vite.ts"),
+  output: path.join("dist", "registerComponents/vite.js")
+}, {
+  input: path.join("src", "registerComponents/esbuild.ts"),
+  output: path.join("dist", "registerComponents/esbuild.js")
 })
 
 const config = entrypoints.flatMap(({input, output}) => (

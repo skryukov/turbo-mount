@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Add `registerComponents` helper for ESBuild. ([@skryukov])
+
 ### Fixed
 
 - Fix entrypoint issue in the install generator. ([@skryukov])
