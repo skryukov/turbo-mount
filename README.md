@@ -15,7 +15,9 @@
   - [View Helpers](#view-helpers)
   - [Supported Frameworks](#supported-frameworks)
   - [Custom Controllers](#custom-controllers)
-  - [Vite Integration](#vite-integration)
+  - [Auto-Loading Components](#auto-loading-components)
+    - [Vite Integration](#vite-integration)
+    - [ESBuild Integration](#esbuild-integration)
   - [Mount Target](#mount-target)
 - [License](#license)
 
@@ -170,24 +172,50 @@ import HexColorPickerController from "controllers/turbo_mount/hex_color_picker_c
 registerComponent(turboMount, "HexColorPicker", HexColorPicker, HexColorPickerController);
 ```
 
-### Vite Integration
+### Auto-Loading Components
 
-`TurboMount` includes a `registerComponents` function that automates the loading of components (requires the `stimulus-vite-helpers` package). It also accepts an optional `controllers` property to autoload customized controllers:
+`TurboMount` includes a `registerComponents` functions that automates the loading of components. `registerComponents` also accepts an optional `controllers` property to autoload customized controllers.
+
+The `registerComponents` helpers search for controllers in the following paths:
+- `controllers/turbo-mount/${controllerName}`
+- `controllers/turbo-mount-${controllerName}`
+
+#### Vite Integration
+
+Vite helper requires the `stimulus-vite-helpers` package to load components and controllers. Here's how to set it up:
+
+```bash
+npm install stimulus-vite-helpers
+```
+
+Then use the `registerComponents` helper to autoload components and controllers:
 
 ```js
-import { TurboMount } from "turbo-mount/react";
-import { registerComponents } from "turbo-mount/registerComponents/react";
+import plugin, { TurboMount } from "turbo-mount/react";
+import { registerComponents } from "turbo-mount/registerComponents/vite";
 
 const controllers = import.meta.glob("./**/*_controller.js", { eager: true });
 const components = import.meta.glob("/components/**/*.jsx", { eager: true });
 
 const turboMount = new TurboMount();
-registerComponents({ turboMount, components, controllers });
+registerComponents({ plugin, turboMount, components, controllers });
 ```
 
-The `registerComponents` helper searches for controllers in the following paths:
-- `controllers/turbo-mount/${controllerName}`
-- `controllers/turbo-mount-${controllerName}`
+#### ESBuild Integration
+
+ESBuild helper requires the `esbuild-rails` package to load components and controllers. Read the [ESBuild Rails README](https://github.com/excid3/esbuild-rails) for more information on how to set it up.
+
+```js
+import plugin, { TurboMount } from "turbo-mount/react";
+import { registerComponents } from "turbo-mount/registerComponents/esbuild";
+
+const turboMount = new TurboMount();
+
+import controllers from "./controllers/**/*_controller.js";
+import components from "./components/**/*.jsx";
+
+registerComponents({ plugin, turboMount, components, controllers });
+```
 
 ### Mount Target
 
