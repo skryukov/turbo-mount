@@ -2,7 +2,12 @@
 
 [![Gem Version](https://badge.fury.io/rb/turbo-mount.svg)](https://rubygems.org/gems/turbo-mount)
 
-`TurboMount` is a simple library that allows you to add highly interactive components from React, Vue, Svelte, and other frameworks to your Hotwire application.
+`TurboMount` is a simple library that allows you to add highly interactive components from React, Vue, Svelte, and other gframeworks to your Hotwire application.
+
+### Learn more
+
+- [The art of Turbo Mount: Hotwire meets modern JS frameworks](https://evilmartians.com/chronicles/the-art-of-turbo-mount-hotwire-meets-modern-js-frameworks)
+- [Excel-lent palettes: a demo application for the Turbo Mount gem](https://github.com/skryukov/excellent-palettes)
 
 ## Table of Contents
 - [Installation](#installation)
