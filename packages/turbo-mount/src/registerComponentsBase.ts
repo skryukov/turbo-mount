@@ -5,7 +5,7 @@ import { camelToKebabCase } from "./helpers";
 
 export type ComponentModule = { default: never } | never;
 
-type ComponentDefinition = {
+export type ComponentDefinition = {
   filename: string;
   module: ComponentModule;
 };
