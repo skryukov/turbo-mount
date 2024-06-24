@@ -1,18 +1,19 @@
+/// <reference types="vite/client" />
+
 import { definitionsFromGlob } from "stimulus-vite-helpers";
-import { Definition } from "@hotwired/stimulus";
 
 import {
   TurboMount,
   Plugin,
   registerComponentsBase,
-  ComponentModule,
+  ComponentDefinition,
 } from "turbo-mount";
 
 export type RegisterComponentsViteProps<T> = {
   plugin: Plugin<T>;
   turboMount: TurboMount;
-  components: Record<string, ComponentModule>;
-  controllers?: Record<string, Definition>;
+  components: ReturnType<ImportMeta["glob"]>;
+  controllers?: ReturnType<ImportMeta["glob"]>;
 };
 
 export const registerComponents = <T>({
@@ -27,7 +28,7 @@ export const registerComponents = <T>({
     components: Object.entries(components).map(([filename, module]) => ({
       filename,
       module,
-    })),
+    })) as ComponentDefinition[],
     controllers: controllers ? definitionsFromGlob(controllers) : [],
   });
 };

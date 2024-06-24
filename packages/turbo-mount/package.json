@@ -25,16 +25,66 @@
   "module": "dist/turbo-mount.js",
   "types": "dist/types/index.d.ts",
   "exports": {
-    "./react": "./dist/plugins/react.js",
-    "./svelte": "./dist/plugins/svelte.js",
-    "./vue": "./dist/plugins/vue.js",
-    "./registerComponents/esbuild": "./dist/registerComponents/esbuild.js",
-    "./registerComponents/vite": "./dist/registerComponents/vite.js",
-    "./registerComponents/react": "./dist/registerComponents/react.js",
-    "./registerComponents/svelte": "./dist/registerComponents/svelte.js",
-    "./registerComponents/vue": "./dist/registerComponents/vue.js",
-    "./registerComponents": "./dist/registerComponents.js",
-    ".": "./dist/turbo-mount.js"
+    "./react": {
+      "import": {
+        "default": "./dist/plugins/react.js",
+        "types": "./dist/types/plugins/react/index.d.ts"
+      }
+    },
+    "./svelte": {
+      "import": {
+        "default": "./dist/plugins/svelte.js",
+        "types": "./dist/types/plugins/svelte/index.d.ts"
+      }
+    },
+    "./vue": {
+      "import": {
+        "default": "./dist/plugins/vue.js",
+        "types": "./dist/types/plugins/vue/index.d.ts"
+      }
+    },
+    "./registerComponents/esbuild": {
+      "import": {
+        "default": "./dist/registerComponents/esbuild.js",
+        "types": "./dist/types/registerComponents/esbuild.d.ts"
+      }
+    },
+    "./registerComponents/vite": {
+      "import": {
+        "default": "./dist/registerComponents/vite.js",
+        "types": "./dist/types/registerComponents/vite.d.ts"
+      }
+    },
+    "./registerComponents/react": {
+      "import": {
+        "default": "./dist/registerComponents/react.js",
+        "types": "./dist/types/plugins/react/registerComponents.d.ts"
+      }
+    },
+    "./registerComponents/svelte": {
+      "import": {
+        "default": "./dist/registerComponents/svelte.js",
+        "types": "./dist/types/plugins/svelte/registerComponents.d.ts"
+      }
+    },
+    "./registerComponents/vue": {
+      "import": {
+        "default": "./dist/registerComponents/vue.js",
+        "types": "./dist/types/plugins/vue/registerComponents.d.ts"
+      }
+    },
+    "./registerComponents": {
+      "import": {
+        "default": "./dist/registerComponents.js",
+        "types": "./dist/types/registerComponents.d.ts"
+      }
+    },
+    ".": {
+      "import": {
+        "default": "./dist/turbo-mount.js",
+        "types": "./dist/types/index.d.ts"
+      }
+    }
   },
   "files": [
     "dist/**/*"
