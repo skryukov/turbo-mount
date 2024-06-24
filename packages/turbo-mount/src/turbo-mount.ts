@@ -104,7 +104,7 @@ export function buildRegisterFunction<T>(plugin: Plugin<T>) {
     turboMount: TurboMount,
     name: string,
     component: T,
-    controller?: ControllerConstructor,
+    controller: ControllerConstructor | undefined = undefined,
   ) => {
     turboMount.register(plugin, name, component, controller);
   };
