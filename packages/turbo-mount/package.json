@@ -1,6 +1,6 @@
 {
   "name": "turbo-mount",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "description": "Use React, Vue, and other components with Hotwire",
   "author": "Svyatoslav Kryukov <me@skryukov.dev>",

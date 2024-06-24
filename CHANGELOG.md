@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.3.2] - 2024-06-24
+
+### Fixed
+
+- Fix typescript exports. ([@skryukov])
+
 ## [0.3.1] - 2024-06-16
 
 ### Added
@@ -61,7 +67,8 @@ and this project adheres to [Semantic Versioning].
 
 [@skryukov]: https://github.com/skryukov
 
-[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.3.2...HEAD
+[0.3.1]: https://github.com/skryukov/turbo-mount/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/skryukov/turbo-mount/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/skryukov/turbo-mount/compare/v0.2.3...v0.3.0
 [0.2.3]: https://github.com/skryukov/turbo-mount/compare/v0.2.2...v0.2.3
