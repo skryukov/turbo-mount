@@ -46,6 +46,8 @@ module TurboMount
         case build_tool
         when "npm"
           run "npm install turbo-mount #{FRAMEWORKS[framework][:npm_packages]}"
+        when "pnpm"
+          run "pnpm install turbo-mount #{FRAMEWORKS[framework][:npm_packages]}"
         when "yarn"
           run "yarn add turbo-mount #{FRAMEWORKS[framework][:npm_packages]}"
         when "bun"
@@ -106,6 +108,8 @@ module TurboMount
         if Rails.root.join("package.json").exist?
           if Rails.root.join("package-lock.json").exist?
             "npm"
+          elsif Rails.root.join("pnpm-lock.yaml").exist?
+            "pnpm"
           elsif Rails.root.join("bun.config.js").exist?
             "bun"
           else
