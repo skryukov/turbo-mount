@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Support components in nested directories. ([@skryukov])
+- Support pnpm build tool. ([@jkogara])
+
 ## [0.3.2] - 2024-06-24
 
 ### Fixed
@@ -65,6 +70,7 @@ and this project adheres to [Semantic Versioning].
 
 - Initial implementation. ([@skryukov])
 
+[@jkogara]: https://github.com/jkogara
 [@skryukov]: https://github.com/skryukov
 
 [Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.3.2...HEAD
