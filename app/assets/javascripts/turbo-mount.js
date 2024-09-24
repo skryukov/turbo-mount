@@ -81,7 +81,7 @@ class TurboMount {
         }
         this.components.set(name, { component, plugin });
         if (controller) {
-            const controllerName = `turbo-mount-${camelToKebabCase(name)}`;
+            const controllerName = `turbo-mount-${camelToKebabCase(name).replace("/", "--")}`;
             this.application.register(controllerName, controller);
         }
     }
@@ -108,7 +108,7 @@ function buildRegisterFunction(plugin) {
 }
 
 const identifierNames = (name) => {
-    const controllerName = camelToKebabCase(name);
+    const controllerName = camelToKebabCase(name).replace("/", "--");
     return [`turbo-mount--${controllerName}`, `turbo-mount-${controllerName}`];
 };
 const registerComponentsBase = ({ plugin, turboMount, components, controllers, }) => {
