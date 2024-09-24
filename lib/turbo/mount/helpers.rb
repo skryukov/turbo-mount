@@ -6,7 +6,7 @@ module Turbo
       def turbo_mount(component_name, props: {}, tag: "div", **attrs, &block)
         raise TypeError, "Component name expected" unless component_name.is_a? String
 
-        controller_name = "turbo-mount-#{component_name.underscore.dasherize}"
+        controller_name = "turbo-mount-#{component_name.underscore.dasherize.gsub("/", "--")}"
         attrs["data-controller"] = controller_name
         prefix = "data-#{controller_name}"
         attrs["#{prefix}-component-value"] = component_name

@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/turbo-mount.svg)](https://rubygems.org/gems/turbo-mount)
 
-`TurboMount` is a simple library that allows you to add highly interactive components from React, Vue, Svelte, and other gframeworks to your Hotwire application.
+`TurboMount` is a simple library that allows you to add highly interactive components from React, Vue, Svelte, and other frameworks to your Hotwire application.
 
 ### Learn more
 
@@ -21,6 +21,7 @@
   - [Supported Frameworks](#supported-frameworks)
   - [Custom Controllers](#custom-controllers)
   - [Auto-Loading Components](#auto-loading-components)
+    - [Components in Nested Directories](#components-in-nested-directories)
     - [Vite Integration](#vite-integration)
     - [ESBuild Integration](#esbuild-integration)
   - [Mount Target](#mount-target)
@@ -184,6 +185,28 @@ registerComponent(turboMount, "HexColorPicker", HexColorPicker, HexColorPickerCo
 The `registerComponents` helpers search for controllers in the following paths:
 - `controllers/turbo-mount/${controllerName}`
 - `controllers/turbo-mount-${controllerName}`
+
+#### Components in Nested Directories
+
+Turbo Mount supports components located in nested directories. For example, if you have a component structure like:
+
+```
+components/
+├── Dashboard/
+│ └── WeatherWidget.tsx
+└── ...
+```
+
+You can use the following helper to mount the component:
+
+```erb
+<%= turbo_mount("Dashboard/WeatherWidget") %>
+```
+
+For nested components, controllers are searched in these paths:
+
+- `controllers/turbo_mount/dashboard/weather_widget_controller.js`
+- `controllers/turbo_mount_dashboard__weather_widget_controller.js`
 
 #### Vite Integration
 
