@@ -2,9 +2,9 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import alias from '@rollup/plugin-alias';
 import typescript from "@rollup/plugin-typescript";
-import {terser} from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 
-const pluginsPath = path.resolve(__dirname, 'src', 'plugins');
+const pluginsPath = path.resolve(path.dirname('.'), 'src', 'plugins');
 
 const external = [
   "@hotwired/stimulus",
