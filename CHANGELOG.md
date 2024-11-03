@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-11-03
+
 ### Added
 
 - [BREAKING] Support Svelte 5. ([@skryukov])
@@ -80,7 +82,8 @@ and this project adheres to [Semantic Versioning].
 [@jkogara]: https://github.com/jkogara
 [@skryukov]: https://github.com/skryukov
 
-[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/skryukov/turbo-mount/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/skryukov/turbo-mount/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/skryukov/turbo-mount/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/skryukov/turbo-mount/compare/v0.3.0...v0.3.1
