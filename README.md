@@ -1,4 +1,8 @@
-# Turbo Mount
+<p align="center">
+  <img src="./assets/logo.svg" title="Turbo Mount logo" width="220" height="45">
+</p>
+
+<h1 align="center">Turbo Mount</h1>
 
 [![Gem Version](https://badge.fury.io/rb/turbo-mount.svg)](https://rubygems.org/gems/turbo-mount)
 
