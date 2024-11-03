@@ -2,7 +2,7 @@
   "name": "turbo-mount",
   "version": "0.3.3",
   "license": "MIT",
-  "description": "Use React, Vue, and other components with Hotwire",
+  "description": "Use React, Vue, Svelte, and other components with Hotwire",
   "author": "Svyatoslav Kryukov <me@skryukov.dev>",
   "repository": {
     "type": "git",
@@ -37,6 +37,12 @@
         "types": "./dist/types/plugins/svelte/index.d.ts"
       }
     },
+    "./svelte4": {
+      "import": {
+        "default": "./dist/plugins/svelte4.js",
+        "types": "./dist/types/plugins/svelte4/index.d.ts"
+      }
+    },
     "./vue": {
       "import": {
         "default": "./dist/plugins/vue.js",
@@ -65,6 +71,12 @@
       "import": {
         "default": "./dist/registerComponents/svelte.js",
         "types": "./dist/types/plugins/svelte/registerComponents.d.ts"
+      }
+    },
+    "./registerComponents/svelte4": {
+      "import": {
+        "default": "./dist/registerComponents/svelte4.js",
+        "types": "./dist/types/plugins/svelte4/registerComponents.d.ts"
       }
     },
     "./registerComponents/vue": {

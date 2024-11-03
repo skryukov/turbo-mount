@@ -143,7 +143,8 @@ This will generate the following HTML:
 
 - React: `"turbo-mount/react"`
 - Vue: `"turbo-mount/vue"`
-- Svelte: `"turbo-mount/svelte"`
+- Svelte 4: `"turbo-mount/svelte4"`
+- Svelte 5: `"turbo-mount/svelte"`
 
 To add support for other frameworks, create a custom plugin. See included plugins for examples.
 

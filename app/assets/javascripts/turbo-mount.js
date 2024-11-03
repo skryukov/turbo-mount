@@ -64,10 +64,9 @@ class TurboMount {
         this.application.turboMount = this;
         this.application.register("turbo-mount", TurboMountController);
         document.addEventListener("turbo:before-morph-element", (event) => {
-            var _a;
             const turboMorphEvent = event;
             const { target, detail } = turboMorphEvent;
-            if ((_a = target.getAttribute("data-controller")) === null || _a === void 0 ? void 0 : _a.includes("turbo-mount")) {
+            if (target.getAttribute("data-controller")?.includes("turbo-mount")) {
                 target.setAttribute("data-turbo-mount-props-value", detail.newElement.getAttribute("data-turbo-mount-props-value") ||
                     "{}");
                 event.preventDefault();
@@ -112,15 +111,14 @@ const identifierNames = (name) => {
     return [`turbo-mount--${controllerName}`, `turbo-mount-${controllerName}`];
 };
 const registerComponentsBase = ({ plugin, turboMount, components, controllers, }) => {
-    var _a;
-    const controllerModules = controllers !== null && controllers !== void 0 ? controllers : [];
+    const controllerModules = controllers ?? [];
     for (const { module, filename } of components) {
         const name = filename
             .replace(/\.\w*$/, "")
             .replace(/^[./]*components\//, "");
         const identifiers = identifierNames(name);
         const controller = controllerModules.find(({ identifier }) => identifiers.includes(identifier));
-        const component = (_a = module.default) !== null && _a !== void 0 ? _a : module;
+        const component = module.default ?? module;
         if (controller) {
             turboMount.register(plugin, name, component, controller.controllerConstructor);
         }

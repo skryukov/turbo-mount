@@ -1,0 +1,23 @@
+react:
+  pins: "react react-dom react-dom/client"
+  npm_packages: "react react-dom"
+  vite_plugin: "@vitejs/plugin-react"
+  extension: "jsx"
+
+vue:
+  pins: "vue"
+  npm_packages: "vue"
+  vite_plugin: "@vitejs/plugin-vue"
+  extension: "vue"
+
+svelte4:
+  pins: "svelte"
+  npm_packages: "svelte@4"
+  vite_plugin: "@sveltejs/vite-plugin-svelte"
+  extension: "svelte"
+
+svelte:
+  pins: "svelte"
+  npm_packages: "svelte@5"
+  vite_plugin: "@sveltejs/vite-plugin-svelte"
+  extension: "svelte"

@@ -1,37 +1,39 @@
 # frozen_string_literal: true
 
+require "yaml"
+require "rails/generators"
+require "rails/generators/base"
+
+require_relative "helpers"
+require_relative "js_package_manager"
+
 module TurboMount
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      FRAMEWORKS = {
-        "react" => {
-          pins: "react react-dom react-dom/client",
-          npm_packages: "react react-dom",
-          vite_plugin: "@vitejs/plugin-react"
-        },
-        "vue" => {
-          pins: "vue",
-          npm_packages: "vue",
-          vite_plugin: "@vitejs/plugin-vue"
-        },
-        "svelte" => {
-          pins: "svelte",
-          npm_packages: "svelte",
-          vite_plugin: "@sveltejs/vite-plugin-svelte"
-        }
-      }.freeze
+      include Helpers
+
+      FRAMEWORKS = YAML.load_file(File.expand_path("./frameworks.yml", __dir__))
 
       source_root File.expand_path("install", __dir__)
+
+      class_option :framework, type: :string,
+        desc: "The framework you want to use with Turbo Mount",
+        enum: FRAMEWORKS.keys,
+        default: nil
+
+      class_option :package_manager, type: :string, default: nil,
+        enum: JSPackageManager.package_managers,
+        desc: "The package manager you want to use to install Turbo Mount"
+
+      class_option :verbose, type: :boolean, default: false,
+        desc: "Run the generator in verbose mode"
 
       def install
         say "Installing Turbo Mount"
 
-        if build_tool.nil?
-          say "Could not find a package.json or config/importmap.rb file to add the turbo-mount dependency to, please add it manually.", :red
-          exit!
-        end
+        package_manager.validate!
 
-        if importmap?
+        if package_manager.importmap?
           install_importmap
         else
           install_nodejs
@@ -43,19 +45,10 @@ module TurboMount
       private
 
       def install_nodejs
-        case build_tool
-        when "npm"
-          run "npm install turbo-mount #{FRAMEWORKS[framework][:npm_packages]}"
-        when "pnpm"
-          run "pnpm install turbo-mount #{FRAMEWORKS[framework][:npm_packages]}"
-        when "yarn"
-          run "yarn add turbo-mount #{FRAMEWORKS[framework][:npm_packages]}"
-        when "bun"
-          run "bun add turbo-mount #{FRAMEWORKS[framework][:npm_packages]}"
-        end
+        package_manager.add_dependencies("turbo-mount", FRAMEWORKS[framework][:npm_packages])
 
         say "Creating Turbo Mount initializer"
-        template "turbo-mount.js", File.join("app/javascript/turbo-mount.js")
+        template "turbo-mount.js", js_file_path("turbo-mount.js")
         begin
           append_to_file js_entrypoint, %(import "./turbo-mount"\n)
         rescue
@@ -66,7 +59,7 @@ module TurboMount
 
       def install_importmap
         say "Creating Turbo Mount initializer"
-        template "turbo-mount.js", File.join("app/javascript/turbo-mount-initializer.js")
+        template "turbo-mount.js", js_file_path("turbo-mount-initializer.js")
         append_to_file "app/javascript/application.js", %(import "turbo-mount-initializer"\n)
 
         say "Pinning Turbo Mount to the importmap"
@@ -75,53 +68,23 @@ module TurboMount
         append_to_file "config/importmap.rb", %(pin "turbo-mount-initializer"\n)
 
         say "Pinning framework dependencies to the importmap"
-        run "bin/importmap pin #{FRAMEWORKS[framework][:pins]}"
-      end
-
-      def js_entrypoint
-        if vite?
-          "app/javascript/entrypoints/application.js"
-        else
-          "app/javascript/application.js"
-        end
-      end
-
-      def vite?
-        Dir.glob(Rails.root.join("vite.config.*")).any?
-      end
-
-      def importmap?
-        build_tool == "importmap"
+        package_manager.add_dependencies(FRAMEWORKS[framework][:pins])
       end
 
       def warn_about_vite_plugin
         say "Make sure to install and add #{FRAMEWORKS[framework][:vite_plugin]} to your Vite config", :yellow
       end
 
-      def build_tool
-        return @build_tool if defined?(@build_tool)
-
-        @build_tool = detect_build_tool
+      def package_manager
+        @package_manager ||= JSPackageManager.new(self)
       end
 
-      def detect_build_tool
-        if Rails.root.join("package.json").exist?
-          if Rails.root.join("package-lock.json").exist?
-            "npm"
-          elsif Rails.root.join("pnpm-lock.yaml").exist?
-            "pnpm"
-          elsif Rails.root.join("bun.config.js").exist?
-            "bun"
-          else
-            "yarn"
-          end
-        elsif Rails.root.join("config/importmap.rb").exist?
-          "importmap"
-        end
+      def extension
+        FRAMEWORKS[framework][:extension]
       end
 
       def framework
-        @framework ||= ask("What framework do you want to use with Turbo Mount?", limited_to: FRAMEWORKS.keys, default: "react")
+        @framework ||= options[:framework] || ask("What framework do you want to use with Turbo Mount?", :green, limited_to: FRAMEWORKS.keys, default: "react")
       end
     end
   end
