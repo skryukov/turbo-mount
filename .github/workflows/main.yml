@@ -8,20 +8,49 @@ on:
   pull_request:
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Linter
+    env:
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler: latest
+          bundler-cache: true
+      - name: Run StandardRB
+        run: bundle exec standardrb
+
+
   build:
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
+    env:
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
     strategy:
       matrix:
         ruby:
           - "3.3"
+          - "3.2"
+          - "3.1"
+          - "3.0"
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    - name: Run the default task
-      run: bundle exec rake
+      - uses: actions/checkout@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          bundler: latest
+      - name: Set Node.js 22.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+      - name: Run tests
+        run: bundle exec rspec

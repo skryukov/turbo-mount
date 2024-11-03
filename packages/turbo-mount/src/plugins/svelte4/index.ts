@@ -1,12 +1,14 @@
 import { buildRegisterFunction, Plugin, TurboMount } from "turbo-mount";
-import { Component, mount, unmount } from "svelte";
+import { ComponentType } from "svelte";
 
-const plugin: Plugin<Component> = {
+const plugin: Plugin<ComponentType> = {
   mountComponent: (mountProps) => {
     const { el, Component, props } = mountProps;
-    const component = mount(Component, { target: el, props });
+
+    const component = new Component({ target: el, props });
+
     return () => {
-      unmount(component);
+      component.$destroy();
     };
   },
 };

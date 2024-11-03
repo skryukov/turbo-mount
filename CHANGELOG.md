@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- [BREAKING] Support Svelte 5. ([@skryukov])
+  `turbo-mount/svelte` is now the Svelte 5 plugin. The Svelte 4 plugin is now `turbo-mount/svelte4`.
+
 ## [0.3.3] - 2024-09-24
 
 ### Added

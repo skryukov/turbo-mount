@@ -13,6 +13,6 @@ const turboMount = new TurboMount();
 // If you want to automatically register components use:
 // import { registerComponents } from "turbo-mount/registerComponents/<%= framework %>";
 // const controllers = import.meta.glob("/controllers/**/*_controller.js", { eager: true });
-// const components = import.meta.glob("/components/**/*.jsx", { eager: true });
+// const components = import.meta.glob("/components/**/*.<%= extension %>", { eager: true });
 // registerComponents({ turboMount, components, controllers });
 <%- end -%>
