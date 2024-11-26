@@ -20,6 +20,8 @@ module TurboMount
       def js_entrypoint
         if vite?
           js_file_path "entrypoints/application.js"
+        elsif shakapacker?
+          js_file_path "packs/application.js"
         else
           js_file_path "application.js"
         end
@@ -39,6 +41,10 @@ module TurboMount
 
       def vite?
         file?("config/vite.json") && Dir.glob(file_path("vite.config.*")).any?
+      end
+
+      def shakapacker?
+        file?("config/shakapacker.yml") || file?("config/webpacker.yml")
       end
 
       # Interactivity Helpers

@@ -10,13 +10,11 @@ RSpec.describe TurboMount::Generators::InstallGenerator, type: :generator do
 
   subject(:generator) { run_generator(args) }
 
-  before do
-    prepare_destination
-    FileUtils.cp_r(Dir["spec/fixtures/with_vite/*"], destination_root) if package_manager != :importmap
-    FileUtils.cp_r(Dir["spec/fixtures/with_importmap/*"], destination_root) if package_manager == :importmap
-  end
+  before { prepare_destination }
 
   context "with --package-manager=importmap" do
+    before { FileUtils.cp_r(Dir["spec/fixtures/with_importmap/*"], destination_root) }
+
     context "with --framework=svelte" do
       let(:framework) { :svelte }
 
@@ -106,7 +104,37 @@ RSpec.describe TurboMount::Generators::InstallGenerator, type: :generator do
     end
   end
 
+  context "with shakapacker" do
+    before { FileUtils.cp_r(Dir["spec/fixtures/with_shakapacker/*"], destination_root) }
+
+    let(:package_manager) { :npm }
+
+    context "with --framework=react" do
+      let(:framework) { :react }
+
+      it "builds the correct structure" do
+        expect { generator }.not_to raise_error
+
+        expect(destination_root).to(have_structure do
+          file("app/javascript/packs/application.js") do
+            contains('import "turbo-mount-initializer"')
+          end
+          file("app/javascript/turbo-mount-initializer.js") do
+            contains('import { registerComponent } from "turbo-mount/react"')
+          end
+          file("package.json") do
+            contains('"turbo-mount":')
+            contains('"react":')
+            contains('"react-dom":')
+          end
+        end)
+      end
+    end
+  end
+
   context "with --package-manager=npm" do
+    before { FileUtils.cp_r(Dir["spec/fixtures/with_vite/*"], destination_root) }
+
     let(:package_manager) { :npm }
 
     context "with --framework=svelte" do
@@ -124,6 +152,7 @@ RSpec.describe TurboMount::Generators::InstallGenerator, type: :generator do
           end
           file("package.json") do
             contains('"turbo-mount":')
+            contains('"svelte":')
           end
         end)
       end
@@ -144,6 +173,7 @@ RSpec.describe TurboMount::Generators::InstallGenerator, type: :generator do
           end
           file("package.json") do
             contains('"turbo-mount":')
+            contains('"svelte":')
           end
         end)
       end
@@ -164,6 +194,8 @@ RSpec.describe TurboMount::Generators::InstallGenerator, type: :generator do
           end
           file("package.json") do
             contains('"turbo-mount":')
+            contains('"react":')
+            contains('"react-dom":')
           end
         end)
       end
@@ -184,6 +216,7 @@ RSpec.describe TurboMount::Generators::InstallGenerator, type: :generator do
           end
           file("package.json") do
             contains('"turbo-mount":')
+            contains('"vue":')
           end
         end)
       end

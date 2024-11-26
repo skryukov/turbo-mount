@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Added
+
+- Support Shakapacker in the installation script. ([@skryukov])
+
+### Fixed
+
+- Fix installation script interactive mode. ([@skryukov])
+- Fix installation script dependencies installation. ([@skryukov])
+
 ## [0.4.0] - 2024-11-03
 
 ### Added
