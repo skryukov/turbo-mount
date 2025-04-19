@@ -18,7 +18,9 @@ type RegisterComponentsProps<T> = {
 };
 
 const identifierNames = (name: string) => {
-  const controllerName = camelToKebabCase(name).replace("/", "--");
+  const controllerName = camelToKebabCase(name)
+    .replace(/_/g, "-")
+    .replace(/\//g, "--");
 
   return [`turbo-mount--${controllerName}`, `turbo-mount-${controllerName}`];
 };
