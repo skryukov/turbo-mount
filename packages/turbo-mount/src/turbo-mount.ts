@@ -75,7 +75,9 @@ export class TurboMount {
     this.components.set(name, { component, plugin });
 
     if (controller) {
-      const controllerName = `turbo-mount-${camelToKebabCase(name).replace("/", "--")}`;
+      const controllerName = `turbo-mount-${camelToKebabCase(name)
+        .replace(/_/g, "-")
+        .replace(/\//g, "--")}`;
       this.application.register(controllerName, controller);
     }
   }
