@@ -32,7 +32,7 @@ class TurboMountController extends Controller {
         return this.resolveMounted(this.componentValue).plugin;
     }
     umountComponent() {
-        this._umountComponentCallback && this._umountComponentCallback();
+        this._umountComponentCallback?.();
         this._umountComponentCallback = undefined;
     }
     mountComponent(el, Component, props) {
@@ -81,8 +81,8 @@ class TurboMount {
         this.components.set(name, { component, plugin });
         if (controller) {
             const controllerName = `turbo-mount-${camelToKebabCase(name)
-              .replace(/_/g, "-")
-              .replace(/\//g, "--")}`;
+                .replace(/_/g, "-")
+                .replace(/\//g, "--")}`;
             this.application.register(controllerName, controller);
         }
     }
@@ -110,9 +110,9 @@ function buildRegisterFunction(plugin) {
 
 const identifierNames = (name) => {
     const controllerName = camelToKebabCase(name)
-      .replace(/_/g, "-")
-      .replace(/\//g, "--");
-    return [`turbo-mount-${controllerName}`];
+        .replace(/_/g, "-")
+        .replace(/\//g, "--");
+    return [`turbo-mount--${controllerName}`, `turbo-mount-${controllerName}`];
 };
 const registerComponentsBase = ({ plugin, turboMount, components, controllers, }) => {
     const controllerModules = controllers ?? [];

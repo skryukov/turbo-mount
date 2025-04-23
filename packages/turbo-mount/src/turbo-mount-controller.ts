@@ -61,7 +61,7 @@ export class TurboMountController extends Controller {
   }
 
   umountComponent() {
-    this._umountComponentCallback && this._umountComponentCallback();
+    this._umountComponentCallback?.();
     this._umountComponentCallback = undefined;
   }
 

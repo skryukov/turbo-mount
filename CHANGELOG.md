@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.4.2] - 2025-04-23
+
+### Fixed
+
+- Fix controller name formatting to handle underscores and slashes properly. ([@benngarcia])
+
 ## [0.4.1] - 2024-11-26
 
 ### Added
@@ -90,10 +96,12 @@ and this project adheres to [Semantic Versioning].
 
 - Initial implementation. ([@skryukov])
 
+[@benngarcia]: https://github.com/benngarcia
 [@jkogara]: https://github.com/jkogara
 [@skryukov]: https://github.com/skryukov
 
-[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/skryukov/turbo-mount/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/skryukov/turbo-mount/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/skryukov/turbo-mount/compare/v0.3.3...v0.4.0
 [0.3.3]: https://github.com/skryukov/turbo-mount/compare/v0.3.2...v0.3.3
