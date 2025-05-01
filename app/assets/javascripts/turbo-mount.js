@@ -108,27 +108,70 @@ function buildRegisterFunction(plugin) {
     };
 }
 
-const identifierNames = (name) => {
-    const controllerName = camelToKebabCase(name)
-        .replace(/_/g, "-")
-        .replace(/\//g, "--");
-    return [`turbo-mount--${controllerName}`, `turbo-mount-${controllerName}`];
+const normalizeFilenameToComponentName = (filename) => {
+    return (filename
+        .replace(/\.\w*$/, "")
+        .replace(/^[./]*components\//, "")
+        .split('/')
+        .map(part => camelToKebabCase(part).replace(/_/g, "-"))
+        .join('/'));
 };
-const registerComponentsBase = ({ plugin, turboMount, components, controllers, }) => {
-    const controllerModules = controllers ?? [];
-    for (const { module, filename } of components) {
-        const name = filename
-            .replace(/\.\w*$/, "")
-            .replace(/^[./]*components\//, "");
-        const identifiers = identifierNames(name);
-        const controller = controllerModules.find(({ identifier }) => identifiers.includes(identifier));
+const generateStimulusIdentifiers = (componentName) => {
+    const baseIdentifier = componentName.replace(/\//g, "--");
+    return [`turbo-mount--${baseIdentifier}`, `turbo-mount-${baseIdentifier}`];
+};
+const registerComponentsBase = ({ plugin, turboMount, components, controllers = [], }) => {
+    const registeredNames = new Set();
+    const indexComponentsToRegisterLater = [];
+    for (const { filename, module } of components) {
+        const componentName = normalizeFilenameToComponentName(filename);
         const component = module.default ?? module;
-        if (controller) {
-            turboMount.register(plugin, name, component, controller.controllerConstructor);
+        console.debug(`[TurboMount Registration] Attempting to register: ${componentName} from ${filename}`);
+        registerSingleComponent({
+            plugin,
+            turboMount,
+            availableControllers: controllers,
+            componentName,
+            component,
+        });
+        registeredNames.add(componentName);
+        if (componentName.endsWith("/index")) {
+            const shortName = componentName.replace(/\/index$/, "");
+            if (shortName) {
+                indexComponentsToRegisterLater.push({ name: shortName, module });
+                console.debug(`[TurboMount Registration] Queuing index component for short name registration: ${shortName}`);
+            }
+        }
+    }
+    for (const { name: shortName, module } of indexComponentsToRegisterLater) {
+        if (!registeredNames.has(shortName)) {
+            const component = module.default ?? module;
+            console.debug(`[TurboMount Registration] Attempting to register index component with short name: ${shortName}`);
+            registerSingleComponent({
+                plugin,
+                turboMount,
+                availableControllers: controllers,
+                componentName: shortName,
+                component,
+            });
+            registeredNames.add(shortName);
         }
         else {
-            turboMount.register(plugin, name, component);
+            console.debug(`[TurboMount Registration] Skipping short name registration for '${shortName}' as it's already registered.`);
         }
+    }
+    console.debug(`[TurboMount Registration] Final registered names:`, Array.from(registeredNames));
+};
+const registerSingleComponent = ({ plugin, turboMount, availableControllers, componentName, component, }) => {
+    const potentialIdentifiers = generateStimulusIdentifiers(componentName);
+    const controllerDefinition = availableControllers.find(({ identifier }) => potentialIdentifiers.includes(identifier));
+    if (controllerDefinition) {
+        console.debug(`[TurboMount Registration] Registering '${componentName}' with Stimulus controller '${controllerDefinition.identifier}'`);
+        turboMount.register(plugin, componentName, component, controllerDefinition.controllerConstructor);
+    }
+    else {
+        console.debug(`[TurboMount Registration] Registering '${componentName}' without a specific Stimulus controller.`);
+        turboMount.register(plugin, componentName, component);
     }
 };
 
