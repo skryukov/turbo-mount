@@ -54,7 +54,27 @@ TurboMountController.values = {
 TurboMountController.targets = ["mount"];
 
 const camelToKebabCase = (str) => {
-    return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    return str
+        .replace(/([a-z])([A-Z])/g, "$1-$2")
+        .replace(/_/g, "-")
+        .replace(/\//g, "--")
+        .toLowerCase();
+};
+const normalizeFilenameToComponentName = (filename) => {
+    return filename
+        .replace(/\.\w*$/, "")
+        .replace(/^[./]*components\//, "");
+};
+const generateStimulusIdentifiers = (componentName) => {
+    const kebabCaseName = camelToKebabCase(componentName);
+    return [`turbo-mount--${kebabCaseName}`, `turbo-mount-${kebabCaseName}`];
+};
+const getShortNameForIndexComponent = (componentName) => {
+    if (componentName.endsWith("/index")) {
+        const shortName = componentName.replace(/\/index$/, "");
+        return shortName || null;
+    }
+    return null;
 };
 
 class TurboMount {
@@ -80,9 +100,7 @@ class TurboMount {
         }
         this.components.set(name, { component, plugin });
         if (controller) {
-            const controllerName = `turbo-mount-${camelToKebabCase(name)
-                .replace(/_/g, "-")
-                .replace(/\//g, "--")}`;
+            const controllerName = `turbo-mount-${camelToKebabCase(name)}`;
             this.application.register(controllerName, controller);
         }
     }
@@ -108,25 +126,12 @@ function buildRegisterFunction(plugin) {
     };
 }
 
-const normalizeFilenameToComponentName = (filename) => {
-    return (filename
-        .replace(/\.\w*$/, "")
-        .replace(/^[./]*components\//, "")
-        .split('/')
-        .map(part => camelToKebabCase(part).replace(/_/g, "-"))
-        .join('/'));
-};
-const generateStimulusIdentifiers = (componentName) => {
-    const baseIdentifier = componentName.replace(/\//g, "--");
-    return [`turbo-mount--${baseIdentifier}`, `turbo-mount-${baseIdentifier}`];
-};
 const registerComponentsBase = ({ plugin, turboMount, components, controllers = [], }) => {
     const registeredNames = new Set();
     const indexComponentsToRegisterLater = [];
     for (const { filename, module } of components) {
         const componentName = normalizeFilenameToComponentName(filename);
         const component = module.default ?? module;
-        console.debug(`[TurboMount Registration] Attempting to register: ${componentName} from ${filename}`);
         registerSingleComponent({
             plugin,
             turboMount,
@@ -135,18 +140,14 @@ const registerComponentsBase = ({ plugin, turboMount, components, controllers = 
             component,
         });
         registeredNames.add(componentName);
-        if (componentName.endsWith("/index")) {
-            const shortName = componentName.replace(/\/index$/, "");
-            if (shortName) {
-                indexComponentsToRegisterLater.push({ name: shortName, module });
-                console.debug(`[TurboMount Registration] Queuing index component for short name registration: ${shortName}`);
-            }
+        const shortName = getShortNameForIndexComponent(componentName);
+        if (shortName) {
+            indexComponentsToRegisterLater.push({ name: shortName, module });
         }
     }
     for (const { name: shortName, module } of indexComponentsToRegisterLater) {
         if (!registeredNames.has(shortName)) {
             const component = module.default ?? module;
-            console.debug(`[TurboMount Registration] Attempting to register index component with short name: ${shortName}`);
             registerSingleComponent({
                 plugin,
                 turboMount,
@@ -156,21 +157,15 @@ const registerComponentsBase = ({ plugin, turboMount, components, controllers = 
             });
             registeredNames.add(shortName);
         }
-        else {
-            console.debug(`[TurboMount Registration] Skipping short name registration for '${shortName}' as it's already registered.`);
-        }
     }
-    console.debug(`[TurboMount Registration] Final registered names:`, Array.from(registeredNames));
 };
 const registerSingleComponent = ({ plugin, turboMount, availableControllers, componentName, component, }) => {
     const potentialIdentifiers = generateStimulusIdentifiers(componentName);
     const controllerDefinition = availableControllers.find(({ identifier }) => potentialIdentifiers.includes(identifier));
     if (controllerDefinition) {
-        console.debug(`[TurboMount Registration] Registering '${componentName}' with Stimulus controller '${controllerDefinition.identifier}'`);
         turboMount.register(plugin, componentName, component, controllerDefinition.controllerConstructor);
     }
     else {
-        console.debug(`[TurboMount Registration] Registering '${componentName}' without a specific Stimulus controller.`);
         turboMount.register(plugin, componentName, component);
     }
 };
