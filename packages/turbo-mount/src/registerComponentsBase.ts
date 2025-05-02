@@ -1,7 +1,11 @@
 import { Definition } from "@hotwired/stimulus";
 
 import { TurboMount, Plugin } from "./turbo-mount";
-import { camelToKebabCase } from "./helpers";
+import { 
+  getShortNameForIndexComponent,
+  normalizeFilenameToComponentName,
+  generateStimulusIdentifiers,
+} from "./helpers";
 
 export type ComponentModule = { default: never } | never;
 
@@ -15,25 +19,6 @@ type RegisterComponentsProps<T> = {
   turboMount: TurboMount;
   components: ComponentDefinition[];
   controllers?: Definition[];
-};
-
-// Normalizes a component filename into a standardized component name.
-// Example: './components/users/UserProfile.tsx' -> 'users/user-profile'
-// Example: 'global/utility/debounce_button.js' -> 'global/utility/debounce-button'
-const normalizeFilenameToComponentName = (filename: string): string => {
-  return (
-    filename
-      .replace(/\.\w*$/, "")
-      .replace(/^[./]*components\//, "")
-      .split('/')
-      .map(part => camelToKebabCase(part).replace(/_/g, "-"))
-      .join('/')
-  );
-};
-
-const generateStimulusIdentifiers = (componentName: string): string[] => {
-  const baseIdentifier = componentName.replace(/\//g, "--");
-  return [`turbo-mount--${baseIdentifier}`, `turbo-mount-${baseIdentifier}`];
 };
 
 
@@ -54,8 +39,6 @@ export const registerComponentsBase = <T>({
     const componentName = normalizeFilenameToComponentName(filename);
     const component = module.default ?? module;
 
-    console.debug(`[TurboMount Registration] Attempting to register: ${componentName} from ${filename}`);
-
     registerSingleComponent({
       plugin,
       turboMount,
@@ -67,12 +50,9 @@ export const registerComponentsBase = <T>({
 
     // If component path ends with /index, prepare for possible registration
     // under the shorter directory name in the second pass.
-    if (componentName.endsWith("/index")) {
-      const shortName = componentName.replace(/\/index$/, "");
-      if (shortName) {
-          indexComponentsToRegisterLater.push({ name: shortName, module });
-          console.debug(`[TurboMount Registration] Queuing index component for short name registration: ${shortName}`);
-      }
+    const shortName = getShortNameForIndexComponent(componentName);
+    if (shortName) {
+      indexComponentsToRegisterLater.push({ name: shortName, module });
     }
   }
 
@@ -82,24 +62,18 @@ export const registerComponentsBase = <T>({
   // would resolve to the same short name ('button').
   for (const { name: shortName, module } of indexComponentsToRegisterLater) {
     if (!registeredNames.has(shortName)) {
-        const component = module.default ?? module;
+      const component = module.default ?? module;
 
-        console.debug(`[TurboMount Registration] Attempting to register index component with short name: ${shortName}`);
-
-        registerSingleComponent({
-            plugin,
-            turboMount,
-            availableControllers: controllers,
-            componentName: shortName,
-            component,
+      registerSingleComponent({
+        plugin,
+        turboMount,
+        availableControllers: controllers,
+        componentName: shortName,
+        component,
       });
       registeredNames.add(shortName);
-    } else {
-        console.debug(`[TurboMount Registration] Skipping short name registration for '${shortName}' as it's already registered.`);
     }
   }
-
-  console.debug(`[TurboMount Registration] Final registered names:`, Array.from(registeredNames));
 };
 
 const registerSingleComponent = <T>({
@@ -122,7 +96,6 @@ const registerSingleComponent = <T>({
   );
 
   if (controllerDefinition) {
-    console.debug(`[TurboMount Registration] Registering '${componentName}' with Stimulus controller '${controllerDefinition.identifier}'`);
     turboMount.register(
       plugin,
       componentName,
@@ -130,7 +103,6 @@ const registerSingleComponent = <T>({
       controllerDefinition.controllerConstructor
     );
   } else {
-    console.debug(`[TurboMount Registration] Registering '${componentName}' without a specific Stimulus controller.`);
     turboMount.register(plugin, componentName, component);
   }
 };
