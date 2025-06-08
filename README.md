@@ -166,7 +166,7 @@ export default class extends TurboMountController {
   get componentProps() {
     return {
       ...this.propsValue,
-      onChange: this.onChange,
+      onChange: this.onChange.bind(this),
     };
   }
 
