@@ -61,9 +61,7 @@ const camelToKebabCase = (str) => {
         .toLowerCase();
 };
 const normalizeFilenameToComponentName = (filename) => {
-    return filename
-        .replace(/\.\w*$/, "")
-        .replace(/^[./]*components\//, "");
+    return filename.replace(/\.\w*$/, "").replace(/^[./]*components\//, "");
 };
 const generateStimulusIdentifiers = (componentName) => {
     const kebabCaseName = camelToKebabCase(componentName);

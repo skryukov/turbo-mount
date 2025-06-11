@@ -1,7 +1,7 @@
 import { Definition } from "@hotwired/stimulus";
 
 import { TurboMount, Plugin } from "./turbo-mount";
-import { 
+import {
   getShortNameForIndexComponent,
   normalizeFilenameToComponentName,
   generateStimulusIdentifiers,
@@ -21,7 +21,6 @@ type RegisterComponentsProps<T> = {
   controllers?: Definition[];
 };
 
-
 // Registers multiple components with TurboMount, potentially linking them
 // to Stimulus controllers based on naming conventions. Handles index
 // components by registering them under both their full path and the parent
@@ -33,7 +32,10 @@ export const registerComponentsBase = <T>({
   controllers = [],
 }: RegisterComponentsProps<T>) => {
   const registeredNames = new Set<string>();
-  const indexComponentsToRegisterLater: Array<{ name: string; module: ComponentModule }> = [];
+  const indexComponentsToRegisterLater: Array<{
+    name: string;
+    module: ComponentModule;
+  }> = [];
 
   for (const { filename, module } of components) {
     const componentName = normalizeFilenameToComponentName(filename);
@@ -92,7 +94,7 @@ const registerSingleComponent = <T>({
   const potentialIdentifiers = generateStimulusIdentifiers(componentName);
 
   const controllerDefinition = availableControllers.find(({ identifier }) =>
-    potentialIdentifiers.includes(identifier)
+    potentialIdentifiers.includes(identifier),
   );
 
   if (controllerDefinition) {
@@ -100,7 +102,7 @@ const registerSingleComponent = <T>({
       plugin,
       componentName,
       component,
-      controllerDefinition.controllerConstructor
+      controllerDefinition.controllerConstructor,
     );
   } else {
     turboMount.register(plugin, componentName, component);
