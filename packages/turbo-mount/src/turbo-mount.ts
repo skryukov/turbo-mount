@@ -53,13 +53,11 @@ export class TurboMount {
 
       const controllerAttr = target.getAttribute("data-controller");
       if (controllerAttr?.includes("turbo-mount")) {
-        // Find the turbo-mount controller name
         const turboMountController = controllerAttr
           .split(/\s+/)
           .find((name) => name.startsWith("turbo-mount"));
 
         if (turboMountController) {
-          // Generate the props attribute name based on the controller name
           const propsAttrName = `data-${turboMountController}-props-value`;
           const newPropsValue =
             detail.newElement.getAttribute(propsAttrName) || "{}";
