@@ -51,13 +51,21 @@ export class TurboMount {
       const turboMorphEvent = event as unknown as TurboMorphEvent;
       const { target, detail } = turboMorphEvent;
 
-      if (target.getAttribute("data-controller")?.includes("turbo-mount")) {
-        target.setAttribute(
-          "data-turbo-mount-props-value",
-          detail.newElement.getAttribute("data-turbo-mount-props-value") ||
-            "{}",
-        );
-        event.preventDefault();
+      const controllerAttr = target.getAttribute("data-controller");
+      if (controllerAttr?.includes("turbo-mount")) {
+        // Find the turbo-mount controller name
+        const turboMountController = controllerAttr
+          .split(/\s+/)
+          .find((name) => name.startsWith("turbo-mount"));
+
+        if (turboMountController) {
+          // Generate the props attribute name based on the controller name
+          const propsAttrName = `data-${turboMountController}-props-value`;
+          const newPropsValue =
+            detail.newElement.getAttribute(propsAttrName) || "{}";
+          target.setAttribute(propsAttrName, newPropsValue);
+          event.preventDefault();
+        }
       }
     });
   }
