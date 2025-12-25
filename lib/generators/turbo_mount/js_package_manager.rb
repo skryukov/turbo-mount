@@ -26,7 +26,7 @@ module TurboMount
           if importmap?
             "bin/importmap pin #{dependencies.join(" ")}"
           else
-            "#{@package_manager} add #{dependencies.join(" ")}#{@generator.options[:verbose] ? "" : " --silent"}"
+            "#{@package_manager} add #{dependencies.join(" ")}#{" --silent" unless @generator.options[:verbose]}"
           end
         @generator.in_root { @generator.run cmd }
       end
