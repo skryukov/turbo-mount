@@ -88,8 +88,7 @@ class TurboMount {
             if (controllerAttr?.includes("turbo-mount")) {
                 const turboMountController = controllerAttr
                     .split(/\s+/)
-                    .find(name => name.startsWith("turbo-mount"));
-
+                    .find((name) => name.startsWith("turbo-mount"));
                 if (turboMountController) {
                     const propsAttrName = `data-${turboMountController}-props-value`;
                     const newPropsValue = detail.newElement.getAttribute(propsAttrName) || "{}";

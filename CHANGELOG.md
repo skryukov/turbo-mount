@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.4.4] - 2025-12-25
+
+### Fixed
+
+- Fix turbo morph handling with custom controller names ([@ibrahima])
+
 ## [0.4.3] - 2025-06-11
 
 ### Added
@@ -103,10 +109,12 @@ and this project adheres to [Semantic Versioning].
 - Initial implementation. ([@skryukov])
 
 [@benngarcia]: https://github.com/benngarcia
+[@ibrahima]: https://github.com/ibrahima
 [@jkogara]: https://github.com/jkogara
 [@skryukov]: https://github.com/skryukov
 
-[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/skryukov/turbo-mount/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/skryukov/turbo-mount/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/skryukov/turbo-mount/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/skryukov/turbo-mount/compare/v0.4.0...v0.4.1
