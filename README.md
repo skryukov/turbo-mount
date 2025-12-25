@@ -137,9 +137,9 @@ Use the following helpers to mount components in your views:
 This will generate the following HTML:
 
 ```html
-<div data-controller="turbo-mount"
-     data-turbo-mount-component-value="HexColorPicker"
-     data-turbo-mount-props-value="{&quot;color&quot;:&quot;#034&quot;}"
+<div data-controller="turbo-mount-hex-color-picker"
+     data-turbo-mount-hex-color-picker-component-value="HexColorPicker"
+     data-turbo-mount-hex-color-picker-props-value="{&quot;color&quot;:&quot;#034&quot;}"
      class="mb-5">
 </div>
 ```

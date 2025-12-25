@@ -84,10 +84,18 @@ class TurboMount {
         document.addEventListener("turbo:before-morph-element", (event) => {
             const turboMorphEvent = event;
             const { target, detail } = turboMorphEvent;
-            if (target.getAttribute("data-controller")?.includes("turbo-mount")) {
-                target.setAttribute("data-turbo-mount-props-value", detail.newElement.getAttribute("data-turbo-mount-props-value") ||
-                    "{}");
-                event.preventDefault();
+            const controllerAttr = target.getAttribute("data-controller");
+            if (controllerAttr?.includes("turbo-mount")) {
+                const turboMountController = controllerAttr
+                    .split(/\s+/)
+                    .find(name => name.startsWith("turbo-mount"));
+
+                if (turboMountController) {
+                    const propsAttrName = `data-${turboMountController}-props-value`;
+                    const newPropsValue = detail.newElement.getAttribute(propsAttrName) || "{}";
+                    target.setAttribute(propsAttrName, newPropsValue);
+                    event.preventDefault();
+                }
             }
         });
     }
