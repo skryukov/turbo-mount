@@ -32,7 +32,7 @@ type TurboMountComponents<T> = Map<string, { component: T; plugin: Plugin<T> }>;
 interface TurboMorphEvent extends CustomEvent {
   target: Element;
   detail: {
-    newElement: Element;
+    newElement?: Element;
   };
 }
 
@@ -50,6 +50,10 @@ export class TurboMount {
     document.addEventListener("turbo:before-morph-element", (event) => {
       const turboMorphEvent = event as unknown as TurboMorphEvent;
       const { target, detail } = turboMorphEvent;
+
+      if (!detail.newElement) {
+        return;
+      }
 
       const controllerAttr = target.getAttribute("data-controller");
       if (controllerAttr?.includes("turbo-mount")) {
