@@ -84,6 +84,9 @@ class TurboMount {
         document.addEventListener("turbo:before-morph-element", (event) => {
             const turboMorphEvent = event;
             const { target, detail } = turboMorphEvent;
+            if (!detail.newElement) {
+                return;
+            }
             const controllerAttr = target.getAttribute("data-controller");
             if (controllerAttr?.includes("turbo-mount")) {
                 const turboMountController = controllerAttr
