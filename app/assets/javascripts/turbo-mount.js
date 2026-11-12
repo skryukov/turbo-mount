@@ -6,10 +6,15 @@ class TurboMountController extends Controller {
         this.skipPropsChangeCallback = false;
     }
     connect() {
+        clearTimeout(this.umountTimeout);
+        this.umountTimeout = undefined;
         this._umountComponentCallback || (this._umountComponentCallback = this.mountComponent(this.mountElement, this.resolvedComponent, this.componentProps));
     }
     disconnect() {
-        this.umountComponent();
+        this.umountTimeout = setTimeout(() => {
+            this.umountTimeout = undefined;
+            this.umountComponent();
+        });
     }
     propsValueChanged() {
         if (this.skipPropsChangeCallback) {
