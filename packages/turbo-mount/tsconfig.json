@@ -6,7 +6,7 @@
     ],
     "target": "es2020",
     "module": "es2015",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noUnusedLocals": true,
     "rootDir": "src",
     "strict": true,
