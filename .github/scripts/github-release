@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+tag="$1"
+version="${tag#v}"
+
+notes=$(awk -v heading="## [$version]" 'index($0, heading) == 1 { found = 1; next } found && /^## / { exit } found' CHANGELOG.md | sed -E 's/\[@([^]]+)\]/@\1/g')
+
+if [ -z "${notes//[[:space:]]/}" ]; then
+  echo "::warning::No CHANGELOG section for $version, skipping GitHub release"
+  exit 0
+fi
+
+notes+=$'\n\n'"**Gem**: https://rubygems.org/gems/turbo-mount/versions/$version"
+notes+=$'\n'"**npm**: https://www.npmjs.com/package/turbo-mount/v/$version"
+
+if [ -n "${DRY_RUN:-}" ]; then
+  printf '%s\n' "$notes"
+  exit 0
+fi
+
+gh release create "$tag" --verify-tag --title "$tag" --notes "$notes"

@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  gem:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0"
+      - run: test "${GITHUB_REF_NAME#v}" = "$(ruby -r ./lib/turbo/mount/version -e 'print Turbo::Mount::VERSION')"
+      - uses: rubygems/configure-rubygems-credentials@v2.1.0
+      - run: gem build turbo-mount.gemspec
+      - run: gem push turbo-mount-*.gem
+
+  npm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/turbo-mount
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: test "${GITHUB_REF_NAME#v}" = "$(node -p 'require("./package.json").version')"
+      - run: npm install --ignore-scripts
+      - run: npm run ci
+      - run: npm publish
+
+  github-release:
+    needs: [gem, npm]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - run: .github/scripts/github-release "$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
