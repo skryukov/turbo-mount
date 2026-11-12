@@ -9,6 +9,8 @@ export class TurboMountController extends Controller {
   static targets = ["mount"];
 
   private skipPropsChangeCallback = false;
+  private inTurboRender = false;
+  private stimulusControllerConnected = false;
 
   declare propsValue: object;
   declare componentValue: string;
@@ -17,7 +19,32 @@ export class TurboMountController extends Controller {
 
   _umountComponentCallback?: () => void;
 
+  initialize() {
+    // During a Turbo Drive navigation, nodes are removed from the DOM, and `disconnect()` is called
+    // on them. If the element had `data-turbo-permanent`, then that exact node is reinserted into
+    // the new DOM and `connect()` is called.
+    //
+    // By deferring tearing down the component until after `turbo:render` finishes, we can determine
+    // if the component is actually gone from the DOM, or if it was just removed and reinserted.
+    //
+    // If this Stimulus controller is disconnected outside of a Turbo render (such as the node
+    // just being removed from the DOM with JavaScript), we want to unmount immediately.
+    document.addEventListener("turbo:before-render", () => {
+      this.inTurboRender = true;
+    });
+
+    document.addEventListener("turbo:render", () => {
+      this.inTurboRender = false;
+
+      if (!this.stimulusControllerConnected) {
+        this.umountComponent();
+      }
+    });
+  }
+
   connect() {
+    this.stimulusControllerConnected = true;
+
     this._umountComponentCallback ||= this.mountComponent(
       this.mountElement,
       this.resolvedComponent,
@@ -26,7 +53,11 @@ export class TurboMountController extends Controller {
   }
 
   disconnect() {
-    this.umountComponent();
+    this.stimulusControllerConnected = false;
+
+    if (!this.inTurboRender) {
+      this.umountComponent();
+    }
   }
 
   propsValueChanged() {
