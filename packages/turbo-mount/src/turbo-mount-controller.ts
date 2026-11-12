@@ -9,6 +9,7 @@ export class TurboMountController extends Controller {
   static targets = ["mount"];
 
   private skipPropsChangeCallback = false;
+  private umountTimeout?: ReturnType<typeof setTimeout>;
 
   declare propsValue: object;
   declare componentValue: string;
@@ -18,6 +19,9 @@ export class TurboMountController extends Controller {
   _umountComponentCallback?: () => void;
 
   connect() {
+    clearTimeout(this.umountTimeout);
+    this.umountTimeout = undefined;
+
     this._umountComponentCallback ||= this.mountComponent(
       this.mountElement,
       this.resolvedComponent,
@@ -26,7 +30,14 @@ export class TurboMountController extends Controller {
   }
 
   disconnect() {
-    this.umountComponent();
+    // Turbo detaches `data-turbo-permanent` elements and reinserts the very
+    // same node later in the same task, so Stimulus reports a disconnect
+    // followed by a connect. Deferring the unmount to the next task lets
+    // `connect()` cancel it and keeps the component (and its state) alive.
+    this.umountTimeout = setTimeout(() => {
+      this.umountTimeout = undefined;
+      this.umountComponent();
+    });
   }
 
   propsValueChanged() {

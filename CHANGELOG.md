@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+### Fixed
+
+- Keep components mounted inside `data-turbo-permanent` elements across Turbo Drive and Turbo Frame renders. ([@natematykiewicz], [@skryukov])
+
 ## [0.4.4] - 2025-12-25
 
 ### Fixed
@@ -111,6 +115,7 @@ and this project adheres to [Semantic Versioning].
 [@benngarcia]: https://github.com/benngarcia
 [@ibrahima]: https://github.com/ibrahima
 [@jkogara]: https://github.com/jkogara
+[@natematykiewicz]: https://github.com/natematykiewicz
 [@skryukov]: https://github.com/skryukov
 
 [Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.4...HEAD
