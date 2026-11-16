@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-11-16
+
 ### Fixed
 
-- Keep components mounted inside `data-turbo-permanent` elements across Turbo Drive and Turbo Frame renders. ([@natematykiewicz], [@skryukov])
+- Keep components mounted inside `data-turbo-permanent` elements across Turbo Drive and Turbo Frame renders. Components now unmount on the next task after their element is removed. ([@natematykiewicz], [@skryukov])
+- Fix `TypeError` in `turbo:before-morph-element` when Turbo removes a node. ([@arjun810])
 
 ## [0.4.4] - 2025-12-25
 
@@ -112,13 +115,15 @@ and this project adheres to [Semantic Versioning].
 
 - Initial implementation. ([@skryukov])
 
+[@arjun810]: https://github.com/arjun810
 [@benngarcia]: https://github.com/benngarcia
 [@ibrahima]: https://github.com/ibrahima
 [@jkogara]: https://github.com/jkogara
 [@natematykiewicz]: https://github.com/natematykiewicz
 [@skryukov]: https://github.com/skryukov
 
-[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.4...HEAD
+[Unreleased]: https://github.com/skryukov/turbo-mount/compare/v0.4.5...HEAD
+[0.4.5]: https://github.com/skryukov/turbo-mount/compare/v0.4.4...v0.4.5
 [0.4.4]: https://github.com/skryukov/turbo-mount/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/skryukov/turbo-mount/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/skryukov/turbo-mount/compare/v0.4.1...v0.4.2
