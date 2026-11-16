@@ -23,3 +23,11 @@ jobs:
           node-version: "20"
       - run: npm install --ignore-scripts
       - run: npm run ci
+      - name: Check bundled assets are up to date
+        run: |
+          npm run copy
+          if [ -n "$(git status --porcelain -- ../../app/assets)" ]; then
+            git status --short -- ../../app/assets
+            echo "::error::app/assets/javascripts is stale. Run 'npm run build && npm run copy' in packages/turbo-mount and commit the result."
+            exit 1
+          fi
